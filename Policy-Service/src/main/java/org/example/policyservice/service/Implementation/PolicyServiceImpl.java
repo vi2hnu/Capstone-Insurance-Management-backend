@@ -48,6 +48,7 @@ public class PolicyServiceImpl implements PolicyService {
                 LocalDate.now().plusMonths(plan.getDuration()), Status.ACTIVE,plan.getCoverageAmount(), 0);
 
         //after notification service send email to user
+        policy.setAgentId(request.agentId());
         return policyUserRepository.save(policy);
     }
 

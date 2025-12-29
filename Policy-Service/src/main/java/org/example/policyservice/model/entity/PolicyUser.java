@@ -23,6 +23,7 @@ public class PolicyUser {
     Status status;
     Double remainingCoverage;
     Integer renewalCounter;
+    String agentId;
 
     public PolicyUser(Plan plan, String userId, LocalDate startDate, LocalDate endDate,
             Status status, Double remainingCoverage,Integer renewalCounter){

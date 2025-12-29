@@ -9,6 +9,8 @@ public record PolicyEnrollDTO(
         String userId,
 
         @NotNull
-        Long planId
+        Long planId,
+
+        String agentId
 )
 {}
