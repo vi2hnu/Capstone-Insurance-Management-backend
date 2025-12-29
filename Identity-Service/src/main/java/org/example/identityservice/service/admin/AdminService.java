@@ -7,6 +7,8 @@ import org.example.identityservice.repository.UsersRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -45,6 +47,8 @@ public class AdminService {
                 dto.email(),
                 encoder.encode(dto.password()), new Date(), dto.gender());
         user.setRole(dto.role());
+        Date oneYearAgo = Date.from(Instant.now().minus(365, ChronoUnit.DAYS));
+        user.setLastPasswordChange(oneYearAgo);
         return usersRepository.save(user);
     }
 

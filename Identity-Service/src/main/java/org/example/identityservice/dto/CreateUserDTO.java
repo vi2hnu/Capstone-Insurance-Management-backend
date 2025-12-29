@@ -28,7 +28,6 @@ public record CreateUserDTO(
     @Size(min = 6, max = 40)
     String password,
 
-    @NotBlank
     Gender gender
 )
 {}
