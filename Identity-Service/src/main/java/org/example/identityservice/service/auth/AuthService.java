@@ -1,7 +1,15 @@
 package org.example.identityservice.service.auth;
 
-import lombok.extern.slf4j.Slf4j;
-import org.example.identityservice.dto.*;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import org.example.identityservice.dto.ChangePasswordDTO;
+import org.example.identityservice.dto.GetUserDTO;
+import org.example.identityservice.dto.LoginDTO;
+import org.example.identityservice.dto.SignupDTO;
+import org.example.identityservice.dto.UserDTO;
 import org.example.identityservice.model.entity.Users;
 import org.example.identityservice.model.enums.Role;
 import org.example.identityservice.repository.UsersRepository;
@@ -14,10 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -58,7 +63,7 @@ public class AuthService {
         if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) < 90) {
             changePassword = false;
         }
-
+        
         return jwtToken;
     }
 

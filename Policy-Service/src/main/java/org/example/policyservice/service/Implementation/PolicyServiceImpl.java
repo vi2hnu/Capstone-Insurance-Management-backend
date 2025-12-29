@@ -6,6 +6,7 @@ import org.example.policyservice.dto.PolicyEnrollDTO;
 import org.example.policyservice.exception.PlanNotFoundException;
 import org.example.policyservice.exception.PolicyNotFoundException;
 import org.example.policyservice.exception.UserAlreadyEnrolledException;
+import org.example.policyservice.exception.UserNotEnrolledException;
 import org.example.policyservice.model.entity.Plan;
 import org.example.policyservice.model.entity.PolicyUser;
 import org.example.policyservice.model.enums.Status;
@@ -66,6 +67,10 @@ public class PolicyServiceImpl implements PolicyService {
         PolicyUser policy = policyUserRepository.findById(request.policyId())
                 .orElseThrow(() -> new PolicyNotFoundException("Policy does not exist: " + request.policyId()));
 
+        if(policy.getStatus()==Status.CANCELLED){
+            log.info("user not enrolled in policy");
+            throw new UserNotEnrolledException("User not enrolled in policy");
+        }
         policy.setRenewalCounter(policy.getRenewalCounter()+1);
         policy.setEndDate(policy.getEndDate().plusMonths(policy.getPlan().getDuration()));
         //send email
