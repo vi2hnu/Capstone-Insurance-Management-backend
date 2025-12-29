@@ -1,9 +1,6 @@
 package org.example.policyservice.model.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 import org.example.policyservice.model.enums.Status;
 
@@ -12,8 +9,12 @@ import java.time.LocalDate;
 @Entity
 public class PolicyUser {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    Long planId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "plan_id", nullable = false)
+    Plan plan;
     String userId;
     LocalDate startDate;
     LocalDate endDate;
@@ -21,4 +22,20 @@ public class PolicyUser {
     @Enumerated(EnumType.STRING)
     Status status;
     Double remainingCoverage;
+    Integer renewalCounter;
+
+    public PolicyUser(Plan plan, String userId, LocalDate startDate, LocalDate endDate,
+            Status status, Double remainingCoverage,Integer renewalCounter){
+        this.plan = plan;
+        this.userId = userId;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.status = status;
+        this.remainingCoverage = remainingCoverage;
+        this.renewalCounter = renewalCounter;
+    }
+
+    public PolicyUser() {
+
+    }
 }

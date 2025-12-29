@@ -36,7 +36,28 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(PlanAlreadyExistsException.class)
-    public ResponseEntity<String> handleUserNotFound(PlanAlreadyExistsException ex) {
+    public ResponseEntity<String> handlePlanAlreadyExits(PlanAlreadyExistsException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(PlanNotFoundException.class)
+    public ResponseEntity<String> handlePlanNotExists(PlanNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(UserAlreadyEnrolledException.class)
+    public ResponseEntity<String> userAlreadyEnrolled(UserAlreadyEnrolledException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(PolicyNotFoundException.class)
+    public ResponseEntity<String> policyNotExist(PolicyNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(UserNotEnrolledException.class)
+    public ResponseEntity<String> userNotEnrolled(UserNotEnrolledException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }
+
