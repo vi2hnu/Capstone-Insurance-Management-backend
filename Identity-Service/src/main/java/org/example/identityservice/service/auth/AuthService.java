@@ -6,8 +6,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.example.identityservice.dto.ChangePasswordDTO;
+import org.example.identityservice.dto.CheckUserDTO;
 import org.example.identityservice.dto.GetUserDTO;
 import org.example.identityservice.dto.LoginDTO;
+import org.example.identityservice.dto.LoginRessultDTO;
 import org.example.identityservice.dto.SignupDTO;
 import org.example.identityservice.dto.UserDTO;
 import org.example.identityservice.model.entity.Users;
@@ -41,7 +43,7 @@ public class AuthService {
         this.jwtUtils = jwtUtils;
     }
 
-    public String login(LoginDTO loginRequest){
+    public LoginRessultDTO login(LoginDTO loginRequest){
 
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.username(), loginRequest.password()));
@@ -63,8 +65,8 @@ public class AuthService {
         if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) < 90) {
             changePassword = false;
         }
-        
-        return jwtToken;
+
+        return new LoginRessultDTO(jwtToken, changePassword);
     }
 
 
@@ -106,5 +108,18 @@ public class AuthService {
         Users user = userRepository.findUsersByUsername(dto.username());
         user.setPassword(encoder.encode(dto.password()));
         return userRepository.save(user);
+    }
+
+    public String checkUser(CheckUserDTO dto) {
+        Users user = userRepository.findByEmail(dto.email());
+        if (user != null) {
+            return user.getId();
+        } else {
+            String username = dto.email().substring(0, dto.email().indexOf('@'));
+            Users newUser = new Users(dto.name(), username, dto.email(), encoder.encode(""), new Date(), dto.gender());
+            newUser.setRole(Role.USER);
+            userRepository.save(newUser);
+            return newUser.getId();
+        }
     }
 }

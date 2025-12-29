@@ -1,8 +1,13 @@
 package org.example.identityservice.controller;
 
-import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
-import org.example.identityservice.dto.*;
+import org.example.identityservice.dto.ChangePasswordDTO;
+import org.example.identityservice.dto.GenerateOtpDTO;
+import org.example.identityservice.dto.GetUserDTO;
+import org.example.identityservice.dto.LoginDTO;
+import org.example.identityservice.dto.MessageResponse;
+import org.example.identityservice.dto.SignupDTO;
+import org.example.identityservice.dto.UserDTO;
+import org.example.identityservice.dto.ValidateOtpDTO;
 import org.example.identityservice.model.entity.Users;
 import org.example.identityservice.service.auth.AuthService;
 import org.example.identityservice.service.jwt.JwtUtils;
@@ -10,7 +15,14 @@ import org.example.identityservice.service.otp.OtpService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
+import org.example.identityservice.dto.CheckUserDTO;
 
 @Slf4j
 @RestController
@@ -74,4 +86,8 @@ public class AuthController {
         return ResponseEntity.ok(otpService.verifyOtp(request));
     }
 
+    @PostMapping("/check/user")
+    public ResponseEntity<String> checkUser(@RequestBody CheckUserDTO dto) {
+        return ResponseEntity.ok(authService.checkUser(dto));
+    }
 }
