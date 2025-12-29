@@ -2,7 +2,7 @@ package org.example.identityservice.model.entity;
 
 import lombok.Data;
 import org.example.identityservice.model.enums.Gender;
-import org.example.identityservice.model.enums.Roles;
+import org.example.identityservice.model.enums.Role;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -24,7 +24,16 @@ public class Users {
     String password;
     Date lastPasswordChange;
     Gender gender;
-    Roles role;
+    Role role;
+
+    public Users(String name,String username, String email, String password,Date lastPasswordChange, Gender gender){
+        this.name = name;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.lastPasswordChange = lastPasswordChange;
+        this.gender = gender;
+    }
 
     public Users(String username, String email, String password,Date lastPasswordChange){
         this.username = username;
@@ -32,4 +41,6 @@ public class Users {
         this.password = password;
         this.lastPasswordChange = lastPasswordChange;
     }
+    public Users() {}
+
 }

@@ -3,22 +3,26 @@ package org.example.identityservice.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import org.example.identityservice.model.enums.Gender;
 
 import java.util.Set;
 
 public record SignupDTO(
-    @NotBlank
-    @Size(min = 3, max = 20)
-    String username,
+        @NotBlank
+        String name,
 
-    @NotBlank
-    @Size(max = 50)
-    @Email
-    String email,
+        @NotBlank
+        @Size(min = 3, max = 20)
+        String username,
 
-    Set<String> role,
+        @NotBlank
+        @Size(max = 50)
+        @Email
+        String email,
 
-    @NotBlank
-    @Size(min = 6, max = 40)
-    String password
+        @NotBlank
+        @Size(min = 6, max = 40)
+        String password,
+
+        Gender gender
 ) {}

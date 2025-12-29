@@ -3,11 +3,10 @@ package org.example.identityservice.service.auth;
 import lombok.extern.slf4j.Slf4j;
 import org.example.identityservice.dto.*;
 import org.example.identityservice.model.entity.Users;
-import org.example.identityservice.model.enums.Roles;
+import org.example.identityservice.model.enums.Role;
 import org.example.identityservice.repository.UsersRepository;
 import org.example.identityservice.service.jwt.JwtUtils;
 import org.example.identityservice.service.user.UserDetailsImpl;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -71,25 +70,25 @@ public class AuthService {
 
 
     public boolean signUp(SignupDTO signUpRequest){
+        log.info("in service");
         if (userRepository.existsByUsername(signUpRequest.username()) || userRepository.existsByEmail(signUpRequest.email())) {
             log.info("user exists");
             return false;
         }
 
         // Create new user's account
-        Users user = new Users(signUpRequest.username(),
+        Users user = new Users(signUpRequest.name(),signUpRequest.username(),
                 signUpRequest.email(),
-                encoder.encode(signUpRequest.password()),new Date());
+                encoder.encode(signUpRequest.password()),new Date(),signUpRequest.gender());
 
-        user.setRole(Roles.USER);
+        user.setRole(Role.USER);
         userRepository.save(user);
         return true;
     }
 
-    public Users getUser(GetUserDTO dto){
+    public UserDTO getUser(GetUserDTO dto){
         Users user = userRepository.findUsersByUsername(dto.username());
-        user.setPassword("");
-        return user;
+        return  new UserDTO(user.getUsername(),user.getName(),user.getEmail(),user.getGender(),user.getRole());
     }
 
     public void changePassword(ChangePasswordDTO request){

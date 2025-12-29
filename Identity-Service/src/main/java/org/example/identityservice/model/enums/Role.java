@@ -1,6 +1,6 @@
 package org.example.identityservice.model.enums;
 
-public enum Roles {
+public enum Role {
     USER,
     ADMIN,
     CLAIMS_OFFICER,

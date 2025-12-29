@@ -3,7 +3,6 @@ package org.example.identityservice.controller;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.example.identityservice.dto.*;
-import org.example.identityservice.model.entity.Users;
 import org.example.identityservice.service.auth.AuthService;
 import org.example.identityservice.service.jwt.JwtUtils;
 import org.springframework.http.HttpHeaders;
@@ -49,7 +48,7 @@ public class AuthController {
     }
 
     @PostMapping("/user")
-    public ResponseEntity<Users> getUser(@RequestBody GetUserDTO dto) {
+    public ResponseEntity<UserDTO> getUser(@RequestBody GetUserDTO dto) {
         return ResponseEntity.ok(authService.getUser(dto));
     }
 
