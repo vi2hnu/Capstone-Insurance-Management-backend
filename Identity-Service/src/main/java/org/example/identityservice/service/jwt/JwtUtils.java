@@ -83,7 +83,6 @@ public class JwtUtils {
 
     public String generateTokenFromUsername(String username) {
         Users user = userDetailsServiceImpl.getUserDetails(username);
-        log.info("{}",jwtExpirationMs);
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())

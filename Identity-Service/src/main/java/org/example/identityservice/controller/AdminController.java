@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.identityservice.dto.CreateUserDTO;
 import org.example.identityservice.dto.UserDTO;
 import org.example.identityservice.model.entity.Users;
-import org.example.identityservice.service.auth.AdminService;
+import org.example.identityservice.service.admin.AdminService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,4 +1,4 @@
-package org.example.identityservice.service.auth;
+package org.example.identityservice.service.admin;
 
 import org.example.identityservice.dto.CreateUserDTO;
 import org.example.identityservice.dto.UserDTO;
