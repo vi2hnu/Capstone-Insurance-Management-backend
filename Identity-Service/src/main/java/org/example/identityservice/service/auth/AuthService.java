@@ -1,0 +1,106 @@
+package org.example.identityservice.service.auth;
+
+import lombok.extern.slf4j.Slf4j;
+import org.example.identityservice.dto.*;
+import org.example.identityservice.model.entity.Users;
+import org.example.identityservice.model.enums.Roles;
+import org.example.identityservice.repository.UsersRepository;
+import org.example.identityservice.service.jwt.JwtUtils;
+import org.example.identityservice.service.user.UserDetailsImpl;
+import org.springframework.http.ResponseCookie;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+@Slf4j
+@Service
+public class AuthService {
+
+    private final AuthenticationManager authenticationManager;
+    private final UsersRepository userRepository;
+    private final PasswordEncoder encoder;
+    private final JwtUtils jwtUtils;
+
+    public AuthService(AuthenticationManager authenticationManager, UsersRepository userRepository,
+                       PasswordEncoder encoder, JwtUtils jwtUtils){
+        this.authenticationManager = authenticationManager;
+        this.userRepository = userRepository;
+        this.encoder = encoder;
+        this.jwtUtils = jwtUtils;
+    }
+
+    public AuthResult login(LoginDTO loginRequest){
+
+        Authentication authentication = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.username(), loginRequest.password()));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        // generate JWT string instead of cookie
+        String jwtToken = jwtUtils.generateTokenFromUsername(userDetails.getUsername());
+
+        List<String> roles = userDetails.getAuthorities().stream()
+                .map(item -> item.getAuthority())
+                .collect(Collectors.toList());
+
+        boolean changePassword = true;
+
+        long diff = new Date().getTime() - userDetails.getLastPasswordChange().getTime();
+        if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) < 90) {
+            changePassword = false;
+        }
+
+        return new AuthResult(jwtToken, new UserInfoResponse(
+                userDetails.getId(),
+                userDetails.getUsername(),
+                userDetails.getEmail(),
+                roles,
+                changePassword
+        ));
+    }
+
+
+    public boolean signUp(SignupDTO signUpRequest){
+        if (userRepository.existsByUsername(signUpRequest.username()) || userRepository.existsByEmail(signUpRequest.email())) {
+            log.info("user exists");
+            return false;
+        }
+
+        // Create new user's account
+        Users user = new Users(signUpRequest.username(),
+                signUpRequest.email(),
+                encoder.encode(signUpRequest.password()),new Date());
+
+        user.setRole(Roles.USER);
+        userRepository.save(user);
+        return true;
+    }
+
+    public Users getUser(GetUserDTO dto){
+        Users user = userRepository.findUsersByUsername(dto.username());
+        user.setPassword("");
+        return user;
+    }
+
+    public void changePassword(ChangePasswordDTO request){
+        Authentication authentication = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(request.username(), request.oldPassword()));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        Users user = userRepository.findUsersByUsername(request.username());
+        user.setPassword(encoder.encode(request.newPassword()));
+        user.setLastPasswordChange(new Date());
+        userRepository.save(user);
+    }
+}
