@@ -3,15 +3,14 @@ package org.example.identityservice.controller;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.example.identityservice.dto.*;
+import org.example.identityservice.model.entity.Users;
 import org.example.identityservice.service.auth.AuthService;
 import org.example.identityservice.service.jwt.JwtUtils;
+import org.example.identityservice.service.otp.OtpService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -20,10 +19,12 @@ public class AuthController {
 
     private final AuthService authService;
     private final JwtUtils jwtUtils;
+    private final OtpService otpService;
 
-    public AuthController(AuthService authService,JwtUtils jwtUtils){
+    public AuthController(AuthService authService,JwtUtils jwtUtils, OtpService otpService){
         this.authService = authService;
         this.jwtUtils = jwtUtils;
+        this.otpService = otpService;
     }
 
     @PostMapping("/signIn")
@@ -57,4 +58,20 @@ public class AuthController {
         authService.changePassword(request);
         return ResponseEntity.ok(new MessageResponse("User password has been changed. Please login again"));
     }
+
+    @PostMapping("/forgot/password")
+    public ResponseEntity<Users> forgotPassword(@RequestBody LoginDTO request){
+        return ResponseEntity.ok(authService.forgotPassword(request));
+    }
+
+    @PostMapping("/otp/generate")
+    public ResponseEntity<String> generateOtp(@RequestBody GenerateOtpDTO request){
+        return ResponseEntity.ok(otpService.generateOtp(request));
+    }
+
+    @PostMapping("/otp/validate")
+    public ResponseEntity<Boolean> validateOtp(@RequestBody ValidateOtpDTO request){
+        return ResponseEntity.ok(otpService.verifyOtp(request));
+    }
+
 }

@@ -36,7 +36,7 @@ public class AuthService {
         this.jwtUtils = jwtUtils;
     }
 
-    public AuthResult login(LoginDTO loginRequest){
+    public String login(LoginDTO loginRequest){
 
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.username(), loginRequest.password()));
@@ -59,13 +59,7 @@ public class AuthService {
             changePassword = false;
         }
 
-        return new AuthResult(jwtToken, new UserInfoResponse(
-                userDetails.getId(),
-                userDetails.getUsername(),
-                userDetails.getEmail(),
-                roles,
-                changePassword
-        ));
+        return jwtToken;
     }
 
 
@@ -101,5 +95,11 @@ public class AuthService {
         user.setPassword(encoder.encode(request.newPassword()));
         user.setLastPasswordChange(new Date());
         userRepository.save(user);
+    }
+
+    public Users forgotPassword(LoginDTO dto){
+        Users user = userRepository.findUsersByUsername(dto.username());
+        user.setPassword(encoder.encode(dto.password()));
+        return userRepository.save(user);
     }
 }
