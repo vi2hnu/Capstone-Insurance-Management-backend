@@ -18,4 +18,14 @@ public class HospitalPlan {
 
     @Enumerated(EnumType.STRING)
     Type networkType;
+
+    public HospitalPlan(Hospital hospital, Long planId, Type networkType) {
+        this.hospital = hospital;
+        this.planId = planId;
+        this.networkType = networkType;
+    }
+
+    public HospitalPlan() {
+
+    }
 }

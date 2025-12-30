@@ -1,0 +1,8 @@
+package org.example.providerservice.repository;
+
+import org.example.providerservice.model.entity.HospitalBank;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface HospitalBankRepository extends JpaRepository<HospitalBank, Long> {
+    
+}
