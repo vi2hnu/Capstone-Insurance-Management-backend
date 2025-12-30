@@ -122,4 +122,19 @@ public class AuthService {
             return newUser.getId();
         }
     }
+
+    public UserDTO getById(String id) {
+        Users user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            return null;
+        }
+        return new UserDTO(user.getUsername(), user.getName(), user.getEmail(), user.getGender(), user.getRole());
+    }
+
+    public List<UserDTO> getAllUsers(List<String> ids) {
+        List<Users> users = userRepository.findAllById(ids);
+        return users.stream()
+            .map(user -> new UserDTO(user.getUsername(), user.getName(), user.getEmail(), user.getGender(), user.getRole()))
+            .collect(Collectors.toList());
+    }
 }

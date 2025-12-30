@@ -1,6 +1,9 @@
 package org.example.identityservice.controller;
 
+import java.util.List;
+
 import org.example.identityservice.dto.ChangePasswordDTO;
+import org.example.identityservice.dto.CheckUserDTO;
 import org.example.identityservice.dto.GenerateOtpDTO;
 import org.example.identityservice.dto.GetUserDTO;
 import org.example.identityservice.dto.LoginDTO;
@@ -15,6 +18,8 @@ import org.example.identityservice.service.otp.OtpService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +27,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.example.identityservice.dto.CheckUserDTO;
 
 @Slf4j
 @RestController
@@ -83,11 +87,27 @@ public class AuthController {
 
     @PostMapping("/otp/validate")
     public ResponseEntity<Boolean> validateOtp(@RequestBody ValidateOtpDTO request){
-        return ResponseEntity.ok(otpService.verifyOtp(request));
+        Boolean isValid = otpService.verifyOtp(request);
+        if(isValid){
+            return ResponseEntity.ok(true);
+        }
+        return ResponseEntity.badRequest().body(false);
     }
 
     @PostMapping("/check/user")
     public ResponseEntity<String> checkUser(@RequestBody CheckUserDTO dto) {
         return ResponseEntity.ok(authService.checkUser(dto));
     }
+
+    @GetMapping("/get/user/{id}")
+    public ResponseEntity<UserDTO> getUserById(@PathVariable String id) {
+        return ResponseEntity.ok(authService.getById(id));
+    }
+
+    @PostMapping("/get/user-list")
+    public ResponseEntity<List<UserDTO>> getUserList(@RequestBody List<String> ids) {
+        return ResponseEntity.ok(authService.getAllUsers(ids));
+    }
+    
+
 }
