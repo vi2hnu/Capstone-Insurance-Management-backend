@@ -1,6 +1,7 @@
 package org.example.policyservice.service.Implementation;
 
 import lombok.extern.slf4j.Slf4j;
+import org.example.policyservice.dto.CoverageChangeDTO;
 import org.example.policyservice.dto.PolicyUserDTO;
 import org.example.policyservice.dto.PolicyEnrollDTO;
 import org.example.policyservice.exception.*;
@@ -21,11 +22,11 @@ import java.util.Objects;
 public class PolicyServiceImpl implements PolicyService {
 
     private final PlanRepository planRepository;
-    private final PolicyUserRepository policyUserRepository;
+    private final PolicyUserRepository policyRepository;
 
-    public PolicyServiceImpl(PlanRepository planRepository ,PolicyUserRepository policyUserRepository){
+    public PolicyServiceImpl(PlanRepository planRepository ,PolicyUserRepository policyRepository){
         this.planRepository = planRepository;
-        this.policyUserRepository = policyUserRepository;
+        this.policyRepository = policyRepository;
     }
 
     @Override
@@ -37,7 +38,7 @@ public class PolicyServiceImpl implements PolicyService {
         //after feign connection check if user exists
 
         Plan plan = planRepository.findPlanById(request.planId());
-        if(policyUserRepository.existsPolicyUserByUserIdAndPlan(request.userId(),plan)){
+        if(policyRepository.existsPolicyUserByUserIdAndPlan(request.userId(),plan)){
             log.error("User Already enrolled in plan");
             throw new UserAlreadyEnrolledException("User Already enrolled in plan");
         }
@@ -47,12 +48,12 @@ public class PolicyServiceImpl implements PolicyService {
 
         // send email to user
         policy.setAgentId(request.agentId());
-        return policyUserRepository.save(policy);
+        return policyRepository.save(policy);
     }
 
     @Override
     public void cancelPolicy(PolicyUserDTO request) {
-        Policy policy = policyUserRepository.findById(request.policyId())
+        Policy policy = policyRepository.findById(request.policyId())
                 .orElseThrow(() -> new PolicyNotFoundException("Policy does not exist: " + request.policyId()));
 
         if(!Objects.equals(request.userId(), policy.getUserId())){
@@ -67,12 +68,12 @@ public class PolicyServiceImpl implements PolicyService {
         policy.setStatus(Status.CANCELLED);
         //send email to user
 
-        policyUserRepository.save(policy);
+        policyRepository.save(policy);
     }
 
     @Override
     public Policy renewPolicy(PolicyUserDTO request) {
-        Policy policy = policyUserRepository.findById(request.policyId())
+        Policy policy = policyRepository.findById(request.policyId())
                 .orElseThrow(() -> new PolicyNotFoundException("Policy does not exist: " + request.policyId()));
 
         if(!Objects.equals(request.userId(), policy.getUserId())){
@@ -93,11 +94,35 @@ public class PolicyServiceImpl implements PolicyService {
         policy.setEndDate(policy.getEndDate().plusMonths(policy.getPlan().getDuration()));
         //send email
 
-        return policyUserRepository.save(policy);
+        return policyRepository.save(policy);
     }
 
     @Override
-    public List<Policy> viewAllRegisteredPolicies(String username) {
-        return policyUserRepository.findByUserId(username);
+    public List<Policy> viewAllRegisteredPolicies(String userId) {
+        return policyRepository.findByUserId(userId);
     }
+
+    @Override
+    public Policy changeCoverage(CoverageChangeDTO request) {
+        Policy policy = policyRepository.findById(request.policyId())
+                .orElseThrow(()->new PolicyNotFoundException("User not enrolled in policy"));
+
+        if(!Objects.equals(policy.getAgentId(), request.agentId())){
+            throw new PolicyNotEnrolledByAgentException("Policy was not enrolled by agent");
+        }
+
+        if(policy.getStatus()!=Status.ACTIVE){
+            throw new UserNotEnrolledException("User not enrolled in policy");
+        }
+
+        policy.setRemainingCoverage(policy.getRemainingCoverage()- request.claimedAmount());
+        return policyRepository.save(policy);
+    }
+
+    @Override
+    public List<Policy> getAllAgentEnrolledPolicies(String agentId) {
+        return policyRepository.findByAgentId(agentId);
+    }
+
+
 }

@@ -1,6 +1,7 @@
 package org.example.policyservice.controller;
 
 import jakarta.validation.Valid;
+import org.example.policyservice.dto.CoverageChangeDTO;
 import org.example.policyservice.dto.PolicyUserDTO;
 import org.example.policyservice.dto.PolicyEnrollDTO;
 import org.example.policyservice.model.entity.Policy;
@@ -26,7 +27,7 @@ public class PolicyController {
         return ResponseEntity.status(HttpStatus.OK).body(policyService.enrollUser(request));
     }
 
-    @PostMapping("/cancel")
+    @DeleteMapping("/cancel")
     public ResponseEntity<Void> cancelPolicy(@RequestBody @Valid PolicyUserDTO requesst){
         policyService.cancelPolicy(requesst);
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
@@ -37,8 +38,13 @@ public class PolicyController {
         return ResponseEntity.status(HttpStatus.OK).body(policyService.renewPolicy(request));
     }
 
-    @GetMapping("/get/{userId}")
+    @GetMapping("/get/all/{userId}")
     public ResponseEntity<List<Policy>> getAllEnrolledPolicy(@PathVariable String userId){
         return ResponseEntity.status(HttpStatus.OK).body(policyService.viewAllRegisteredPolicies(userId));
+    }
+
+    @PutMapping("/change/claimed-amount")
+    public ResponseEntity<Policy> changeClaimedAmount(@RequestBody @Valid CoverageChangeDTO request){
+        return ResponseEntity.status(HttpStatus.OK).body(policyService.changeCoverage(request));
     }
 }

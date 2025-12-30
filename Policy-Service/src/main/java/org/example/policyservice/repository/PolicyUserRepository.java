@@ -9,4 +9,5 @@ import java.util.List;
 public interface PolicyUserRepository extends JpaRepository<Policy,Long> {
     boolean existsPolicyUserByUserIdAndPlan(String userId, Plan plan);
     List<Policy> findByUserId(String userId);
+    List<Policy> findByAgentId(String agentId);
 }
