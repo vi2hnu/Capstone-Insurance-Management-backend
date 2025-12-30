@@ -1,7 +1,6 @@
 package org.example.policyservice.controller;
 
 import jakarta.validation.Valid;
-import jakarta.ws.rs.PathParam;
 import org.example.policyservice.dto.GetUserIdDTO;
 import org.example.policyservice.feign.FeignClient;
 import org.example.policyservice.model.entity.Policy;

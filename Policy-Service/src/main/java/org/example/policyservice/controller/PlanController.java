@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import org.example.policyservice.dto.PlanDTO;
 import org.example.policyservice.model.entity.Plan;
 import org.example.policyservice.service.PlanService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,9 +25,5 @@ public class PlanController {
         return ResponseEntity.status(HttpStatus.OK).body(planService.getAllPlans());
     }
 
-    @PostMapping("/admin/plan/add")
-    public ResponseEntity<Plan> addPlan(@RequestBody @Valid PlanDTO request){
-        return ResponseEntity.status(HttpStatus.OK).body(planService.addPlan(request));
-    }
 
 }
