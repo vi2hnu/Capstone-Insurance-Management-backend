@@ -89,7 +89,7 @@ public class AuthService {
 
     public UserDTO getUser(GetUserDTO dto){
         Users user = userRepository.findUsersByUsername(dto.username());
-        return  new UserDTO(user.getUsername(),user.getName(),user.getEmail(),user.getGender(),user.getRole());
+        return  new UserDTO(user.getId(), user.getUsername(),user.getName(),user.getEmail(),user.getGender(),user.getRole());
     }
 
     public void changePassword(ChangePasswordDTO request){
@@ -128,13 +128,13 @@ public class AuthService {
         if (user == null) {
             return null;
         }
-        return new UserDTO(user.getUsername(), user.getName(), user.getEmail(), user.getGender(), user.getRole());
+        return new UserDTO(user.getId(), user.getUsername(), user.getName(), user.getEmail(), user.getGender(), user.getRole());
     }
 
     public List<UserDTO> getAllUsers(List<String> ids) {
         List<Users> users = userRepository.findAllById(ids);
         return users.stream()
-            .map(user -> new UserDTO(user.getUsername(), user.getName(), user.getEmail(), user.getGender(), user.getRole()))
+            .map(user -> new UserDTO(user.getId(), user.getUsername(), user.getName(), user.getEmail(), user.getGender(), user.getRole()))
             .collect(Collectors.toList());
     }
 }

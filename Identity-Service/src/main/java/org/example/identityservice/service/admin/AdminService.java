@@ -1,17 +1,17 @@
 package org.example.identityservice.service.admin;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.example.identityservice.dto.CreateUserDTO;
 import org.example.identityservice.dto.UserDTO;
 import org.example.identityservice.model.entity.Users;
 import org.example.identityservice.repository.UsersRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 @Service
 public class AdminService {
@@ -29,7 +29,7 @@ public class AdminService {
         List<UserDTO> result = new ArrayList<>();
         users.stream()
                 .forEach(user -> {
-                    result.add(new UserDTO(user.getUsername(),user.getName(),user.getEmail(),user.getGender(),user.getRole()));
+                    result.add(new UserDTO(user.getId(), user.getUsername(),user.getName(),user.getEmail(),user.getGender(),user.getRole()));
                 });
         return result;
     }
