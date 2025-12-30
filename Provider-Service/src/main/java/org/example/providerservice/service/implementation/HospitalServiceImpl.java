@@ -6,12 +6,14 @@ import org.example.providerservice.dto.AddHospitalDTO;
 import org.example.providerservice.dto.BankDetailsDTO;
 import org.example.providerservice.dto.HospitalAuthorityDTO;
 import org.example.providerservice.dto.RegisterPlanDTO;
+import org.example.providerservice.exception.HospitalBankNotFoundException;
 import org.example.providerservice.exception.HospitalNotFoundException;
 import org.example.providerservice.exception.PlanAlreadyRegisteredException;
 import org.example.providerservice.model.entity.Hospital;
 import org.example.providerservice.model.entity.HospitalAuthority;
 import org.example.providerservice.model.entity.HospitalBank;
 import org.example.providerservice.model.entity.HospitalPlan;
+import org.example.providerservice.model.enums.Type;
 import org.example.providerservice.repository.HospitalAuthorityRepository;
 import org.example.providerservice.repository.HospitalBankRepository;
 import org.example.providerservice.repository.HospitalPlanRepository;
@@ -56,7 +58,7 @@ public class HospitalServiceImpl implements HospitalService {
         Hospital hospital = hospitalRepository.findById(bankDetailsDTO.hospitalId())
                 .orElseThrow(() -> new HospitalNotFoundException("Hospital not found"));
         
-        if(hospitalAuthorityRepository.existsByHospitalAndUserId(hospital, bankDetailsDTO.userId()) == false) {
+        if(!hospitalAuthorityRepository.existsByHospitalAndUserId(hospital, bankDetailsDTO.userId())) {
             throw new HospitalNotFoundException("User is not authorized for this hospital");
         }
         
@@ -70,12 +72,16 @@ public class HospitalServiceImpl implements HospitalService {
         Hospital hospital = hospitalRepository.findById(request.hospitalId())
                 .orElseThrow(() -> new HospitalNotFoundException("Hospital not found"));
 
-        if(hospitalAuthorityRepository.existsByHospitalAndUserId(hospital, request.userId()) == false) {
+        if(!hospitalAuthorityRepository.existsByHospitalAndUserId(hospital, request.userId())) {
             throw new HospitalNotFoundException("User is not authorized for this hospital");
         }
 
         if(hospitalPlanRepository.existsByHospitalAndPlanId(hospital, request.planId())) {
             throw new PlanAlreadyRegisteredException("Plan already registered for this hospital");
+        }
+
+        if(request.type()== Type.IN_NETWORK && !hospitalBankRepository.existsByHospital(hospital)){
+            throw new HospitalBankNotFoundException("Hospital bank not found");
         }
 
         HospitalPlan hospitalPlan = new HospitalPlan(hospital,request.planId(),request.type());
