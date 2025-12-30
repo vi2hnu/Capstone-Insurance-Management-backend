@@ -10,6 +10,8 @@ public record PolicyUserDTO(
         String userId,
 
         @NotNull
-        Long policyId
+        Long policyId,
+
+        String agentId
 )
 {}

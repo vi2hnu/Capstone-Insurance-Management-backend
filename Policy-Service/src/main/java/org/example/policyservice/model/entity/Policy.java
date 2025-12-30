@@ -7,7 +7,7 @@ import org.example.policyservice.model.enums.Status;
 import java.time.LocalDate;
 @Data
 @Entity
-public class PolicyUser {
+public class Policy {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -25,8 +25,8 @@ public class PolicyUser {
     Integer renewalCounter;
     String agentId;
 
-    public PolicyUser(Plan plan, String userId, LocalDate startDate, LocalDate endDate,
-            Status status, Double remainingCoverage,Integer renewalCounter){
+    public Policy(Plan plan, String userId, LocalDate startDate, LocalDate endDate,
+                  Status status, Double remainingCoverage, Integer renewalCounter){
         this.plan = plan;
         this.userId = userId;
         this.startDate = startDate;
@@ -36,7 +36,7 @@ public class PolicyUser {
         this.renewalCounter = renewalCounter;
     }
 
-    public PolicyUser() {
+    public Policy() {
 
     }
 }

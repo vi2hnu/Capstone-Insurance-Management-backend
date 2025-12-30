@@ -59,5 +59,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> userNotEnrolled(UserNotEnrolledException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(PolicyNotEnrolledByAgentException.class)
+    public ResponseEntity<String> policyNotEnrolledByAgent(PolicyNotEnrolledByAgentException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }
 

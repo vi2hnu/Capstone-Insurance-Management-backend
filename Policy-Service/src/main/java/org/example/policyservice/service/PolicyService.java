@@ -2,13 +2,13 @@ package org.example.policyservice.service;
 
 import org.example.policyservice.dto.PolicyUserDTO;
 import org.example.policyservice.dto.PolicyEnrollDTO;
-import org.example.policyservice.model.entity.PolicyUser;
+import org.example.policyservice.model.entity.Policy;
 
 import java.util.List;
 
 public interface PolicyService {
-    PolicyUser enrollUser(PolicyEnrollDTO request);
+    Policy enrollUser(PolicyEnrollDTO request);
     void cancelPolicy(PolicyUserDTO request);
-    PolicyUser renewPolicy(PolicyUserDTO request);
-    List<PolicyUser> viewAllRegisteredPolicies(String username);
+    Policy renewPolicy(PolicyUserDTO request);
+    List<Policy> viewAllRegisteredPolicies(String username);
 }
