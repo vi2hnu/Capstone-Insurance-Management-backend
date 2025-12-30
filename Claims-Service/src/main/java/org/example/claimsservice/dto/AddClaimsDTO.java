@@ -17,6 +17,8 @@ public record AddClaimsDTO(
     @NotNull
     Double requestedAmount,
     
-    String supportingDocument
+    String supportingDocument,
+
+    String agentId
 
 ) {}

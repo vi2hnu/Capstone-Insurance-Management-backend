@@ -39,6 +39,13 @@ public class ProviderController {
     public ResponseEntity<List<HospitalPlan>> getMethodName(@PathVariable Long planId) {
         return ResponseEntity.status(HttpStatus.OK).body(hospitalService.getAllHospitalsByPlan(planId));
     }
-    
-    
+
+    @GetMapping("/check/{planId}/{hospitalId}")
+    public ResponseEntity<Boolean> checkMethodName(@PathVariable Long planId, @PathVariable Long hospitalId) {
+        if(hospitalService.checkHospitalPlan(planId, hospitalId)) {
+            return ResponseEntity.status(HttpStatus.OK).body(true);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
+    }
+
 }

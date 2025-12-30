@@ -17,4 +17,5 @@ public interface HospitalService {
     HospitalBank addHospitalBank(BankDetailsDTO bankDetailsDTO);
     HospitalPlan registerPlan(RegisterPlanDTO request);
     List<HospitalPlan>  getAllHospitalsByPlan(Long planId);
+    Boolean checkHospitalPlan(Long planId,Long hospitalId);
 }

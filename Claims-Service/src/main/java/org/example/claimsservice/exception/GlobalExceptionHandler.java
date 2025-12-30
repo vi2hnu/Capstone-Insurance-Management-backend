@@ -39,5 +39,15 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> userAlreadyEnrolled(UnsupportedFileTypeException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(PolicyNotFoundException.class)
+    public ResponseEntity<String> handlePolicyNotFoundException(PolicyNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(InvalidPolicyClaimException.class)
+    public ResponseEntity<String> handleInvalidPolicyClaimException(InvalidPolicyClaimException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }
 

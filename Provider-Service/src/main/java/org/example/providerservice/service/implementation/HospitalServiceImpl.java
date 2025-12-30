@@ -87,8 +87,20 @@ public class HospitalServiceImpl implements HospitalService {
         HospitalPlan hospitalPlan = new HospitalPlan(hospital,request.planId(),request.type());
         return hospitalPlanRepository.save(hospitalPlan);
     }
+
+
     @Override
     public List<HospitalPlan> getAllHospitalsByPlan(Long planId) {
         return hospitalPlanRepository.findByPlanId(planId);
     }
+
+    @Override
+    public Boolean checkHospitalPlan(Long planId, Long hospitalId) {
+        Hospital hospital = hospitalRepository.findById(hospitalId)
+                .orElseThrow(() -> new HospitalNotFoundException("Hospital not found"));
+
+        return hospitalPlanRepository.existsByHospitalAndPlanId(hospital, planId);
+    }
+
+
 }

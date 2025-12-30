@@ -2,8 +2,10 @@ package org.example.claimsservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
+@EnableFeignClients(basePackages = "org.example.claimsservice.feign")
 public class ClaimsServiceApplication {
 
 	public static void main(String[] args) {
