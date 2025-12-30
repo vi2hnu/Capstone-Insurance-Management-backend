@@ -49,5 +49,15 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleInvalidPolicyClaimException(InvalidPolicyClaimException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(ClaimAlreadySubmittedException.class)
+    public ResponseEntity<String> claimAlreadySubmitted(ClaimAlreadySubmittedException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(ClaimNotFoundException.class)
+    public ResponseEntity<String> claimNotFound(ClaimNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
 }
 

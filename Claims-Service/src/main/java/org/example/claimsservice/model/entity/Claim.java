@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import org.example.claimsservice.model.enums.ClaimStage;
 import org.example.claimsservice.model.enums.ClaimStatus;
+import org.example.claimsservice.model.enums.ProviderVerificationStatus;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -27,12 +28,14 @@ public class Claim {
     LocalDateTime claimRequestDate;
 
     @Enumerated(EnumType.STRING)
+    ProviderVerificationStatus  hospitalVerification;
+
+    @Enumerated(EnumType.STRING)
     ClaimStatus status;
 
     @Enumerated(EnumType.STRING)
     ClaimStage stage;
-
-    String rejectionReason;
+    String reason;
 
     public Claim(Long policyId, String userId, Long hospitalId, Double requestedAmount, String supportingDocument) {
         this.policyId = policyId;
@@ -41,8 +44,9 @@ public class Claim {
         this.requestedAmount = requestedAmount;
         this.supportingDocument = supportingDocument;
         this.claimRequestDate = LocalDateTime.now();
-        this.status = ClaimStatus.PENDING;
+        this.status = ClaimStatus.SUBMITTED;
         this.stage = ClaimStage.PROVIDER;
+        this.hospitalVerification = ProviderVerificationStatus.PENDING;
     }
 
     public Claim() {

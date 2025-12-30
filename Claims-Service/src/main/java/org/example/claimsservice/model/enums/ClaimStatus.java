@@ -1,7 +1,9 @@
 package org.example.claimsservice.model.enums;
 
 public enum ClaimStatus {
-    PENDING,
+    SUBMITTED,
+    IN_REVIEW,
     APPROVED,
-    REJECTED
+    REJECTED,
+    PAID
 }

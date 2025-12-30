@@ -3,12 +3,18 @@ package org.example.claimsservice.service.Implementation;
 import java.util.List;
 
 import org.example.claimsservice.dto.AddClaimsDTO;
+import org.example.claimsservice.dto.ClaimsOfficerValidationDTO;
+import org.example.claimsservice.dto.ProviderVerificationDTO;
 import org.example.claimsservice.dto.PolicyDTO;
+import org.example.claimsservice.exception.ClaimAlreadySubmittedException;
+import org.example.claimsservice.exception.ClaimNotFoundException;
 import org.example.claimsservice.exception.InvalidPolicyClaimException;
 import org.example.claimsservice.exception.PolicyNotFoundException;
 import org.example.claimsservice.feign.PolicyService;
 import org.example.claimsservice.feign.ProviderService;
 import org.example.claimsservice.model.entity.Claim;
+import org.example.claimsservice.model.enums.ClaimStage;
+import org.example.claimsservice.model.enums.ClaimStatus;
 import org.example.claimsservice.repository.ClaimRepository;
 import org.example.claimsservice.service.ClaimService;
 import org.springframework.stereotype.Service;
@@ -35,7 +41,8 @@ public class ClaimServiceImpl implements ClaimService{
             throw new PolicyNotFoundException("Policy not found");
         }
 
-        if(policy.agentId()!=null && !policy.agentId().equals(request.agentId())){
+        if((policy.agentId()!=null && !policy.agentId().equals(request.agentId())) ||
+                (policy.agentId()==null && request.agentId()!=null)){
             throw new InvalidPolicyClaimException("Agent id mismatch");
         }
 
@@ -43,6 +50,10 @@ public class ClaimServiceImpl implements ClaimService{
                 || policy.remainingCoverage()<request.requestedAmount() ||
                 !providerService.checkHospitalPlan(policy.plan().id(), request.hospitalId()) ) {
             throw new InvalidPolicyClaimException("Invalid policy claim");
+        }
+
+        if(claimRepository.existsByUserIdAndPolicyId(request.userId(),request.policyId())){
+            throw new ClaimAlreadySubmittedException("Claim already submitted");
         }
 
         Claim claim = new Claim(request.policyId(), request.userId(), 
@@ -59,5 +70,39 @@ public class ClaimServiceImpl implements ClaimService{
     public Claim getClaimById(Long id) {
         return claimRepository.findById(id).orElse(null);
     }
-    
+
+    @Override
+    public List<Claim> getClaimByProviderId(Long providerId) {
+        return claimRepository.findByHospitalId(providerId);
+    }
+
+    @Override
+    public Claim providerVerification(ProviderVerificationDTO request) {
+        Claim claim = claimRepository.findById(request.claimId())
+                .orElseThrow(()-> new ClaimNotFoundException("Claim does not exist"));
+
+        if(!claim.getHospitalId().equals(request.providerId())) {
+            throw new ClaimNotFoundException("Claim is not registered under this provider");
+        }
+
+        claim.setHospitalVerification(request.status());
+        claim.setStage(ClaimStage.CLAIMS_OFFICER);
+        claim.setStatus(ClaimStatus.IN_REVIEW);
+        return claimRepository.save(claim);
+    }
+
+    @Override
+    public Claim claimsOfficerValidation(ClaimsOfficerValidationDTO request) {
+        Claim claim = claimRepository.findById(request.claimsId())
+                .orElseThrow(()-> new ClaimNotFoundException("Claim does not exist"));
+
+            claim.setStatus(request.claimStatus());
+        claim.setStage(ClaimStage.PAYMENT);
+
+        //using kafka call the payment service
+
+        return claimRepository.save(claim);
+    }
+
+
 }

@@ -1,6 +1,7 @@
 package org.example.claimsservice.controller;
 
 import org.example.claimsservice.service.MediaService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +21,6 @@ public class MediaController {
 
     @PostMapping("/upload")
     public ResponseEntity<String> uploadPdf(@RequestParam("file") MultipartFile file) {
-        return ResponseEntity.ok(mediaService.uploadPdf(file));
+        return ResponseEntity.status(HttpStatus.CREATED).body(mediaService.uploadPdf(file));
     }
 }

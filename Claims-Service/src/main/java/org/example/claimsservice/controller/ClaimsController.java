@@ -29,7 +29,7 @@ public class ClaimsController {
 
     @PostMapping("/add")
     public ResponseEntity<Claim> postMethodName(@RequestBody @Valid AddClaimsDTO request) {
-        return ResponseEntity.status(HttpStatus.OK).body(claimService.addClaim(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(claimService.addClaim(request));
     }
     
     @GetMapping("/user/{userId}")
