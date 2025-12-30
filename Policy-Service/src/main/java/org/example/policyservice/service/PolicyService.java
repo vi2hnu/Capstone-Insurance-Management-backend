@@ -14,4 +14,5 @@ public interface PolicyService {
     List<Policy> viewAllRegisteredPolicies(String userId);
     Policy changeCoverage(CoverageChangeDTO request);
     List<Policy> getAllAgentEnrolledPolicies(String agentId);
+    Policy getPolicyById(Long policyId);
 }

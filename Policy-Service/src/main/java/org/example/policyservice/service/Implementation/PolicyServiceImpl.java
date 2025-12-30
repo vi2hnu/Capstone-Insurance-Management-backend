@@ -124,5 +124,11 @@ public class PolicyServiceImpl implements PolicyService {
         return policyRepository.findByAgentId(agentId);
     }
 
+    @Override
+    public Policy getPolicyById(Long policyId) {
+        return policyRepository.findById(policyId)
+                .orElseThrow(() -> new PolicyNotFoundException("Policy does not exist: " + policyId));
+    }
+
 
 }

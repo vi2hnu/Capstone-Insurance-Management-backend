@@ -47,4 +47,9 @@ public class PolicyController {
     public ResponseEntity<Policy> changeClaimedAmount(@RequestBody @Valid CoverageChangeDTO request){
         return ResponseEntity.status(HttpStatus.OK).body(policyService.changeCoverage(request));
     }
+
+    @GetMapping("/get/{policyId}")
+    public ResponseEntity<Policy> getPolicy(@PathVariable Long policyId){
+        return ResponseEntity.status(HttpStatus.OK).body(policyService.getPolicyById(policyId));
+    }
 }
