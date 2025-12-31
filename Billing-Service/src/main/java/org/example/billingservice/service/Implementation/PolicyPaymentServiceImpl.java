@@ -9,8 +9,7 @@ import org.example.billingservice.dto.CreateOrderDTO;
 import org.example.billingservice.dto.VerifyPaymentDTO;
 import org.example.billingservice.model.entity.Transaction;
 import org.example.billingservice.model.enums.Status;
-import org.example.billingservice.model.enums.UserType;
-import org.example.billingservice.service.PaymentService;
+import org.example.billingservice.service.PolicyPaymentService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,7 +17,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
 @Service
-public class PaymentServiceImpl implements PaymentService {
+public class PolicyPaymentServiceImpl implements PolicyPaymentService {
 
     @Value("${razorpay.key.secret}")
     private String razorpaySecret;
@@ -27,7 +26,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final RazorpayClient razorpayClient;
     private final TransactionRepository transactionRepository;
 
-    public PaymentServiceImpl(RazorpayClient razorpayClient, TransactionRepository transactionRepository) {
+    public PolicyPaymentServiceImpl(RazorpayClient razorpayClient, TransactionRepository transactionRepository) {
         this.razorpayClient = razorpayClient;
         this.transactionRepository = transactionRepository;
     }
@@ -39,14 +38,8 @@ public class PaymentServiceImpl implements PaymentService {
             json.put("amount",(request.amount() * 100));
             json.put("currency","INR");
             Order order = razorpayClient.orders.create(json);
-            Transaction transaction = new Transaction();
-            transaction.setOrderId(order.get("id"));
-            transaction.setAmount(request.amount());
-            transaction.setUserId(request.userId());
-            transaction.setUserType(UserType.USER);
-            transaction.setPaymentPurpose(request.purpose());
-            transaction.setCreatedAt(LocalDateTime.now());
-            transaction.setStatus(Status.PENDING);
+            Transaction transaction = new Transaction(order.get("id"),null,request.amount(),request.userId()
+            ,request.purpose(),Status.PENDING);
             return transactionRepository.save(transaction);
         }
         catch (Exception e){
@@ -72,7 +65,9 @@ public class PaymentServiceImpl implements PaymentService {
                     razorpaySecret
             );
             transaction.setPaymentId(request.razorpayPaymentId());
-            if (!isValid) {
+            transaction.setCreatedAt(LocalDateTime.now());
+
+            if(!isValid){
                 transaction.setStatus(Status.FAILURE);
                 transactionRepository.save(transaction);
                 return false;
