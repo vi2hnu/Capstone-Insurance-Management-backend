@@ -31,7 +31,7 @@ public class AdminController {
     
 
     @PostMapping("/map/user")
-    public ResponseEntity<HospitalAuthority> postMethodName(@RequestBody @Valid HospitalAuthorityDTO hospitalAuthorityDTO) {
+    public ResponseEntity<HospitalAuthority> mapUser(@RequestBody @Valid HospitalAuthorityDTO hospitalAuthorityDTO) {
         return ResponseEntity.status(HttpStatus.OK).body(hospitalService.mapUserToHospital(hospitalAuthorityDTO));
     }
     

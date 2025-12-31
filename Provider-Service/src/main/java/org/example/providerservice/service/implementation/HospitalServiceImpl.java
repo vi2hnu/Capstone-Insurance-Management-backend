@@ -102,5 +102,12 @@ public class HospitalServiceImpl implements HospitalService {
         return hospitalPlanRepository.existsByHospitalAndPlanId(hospital, planId);
     }
 
+    @Override
+    public Boolean checkAssociation(String userId, Long hospitalId) {
+        Hospital hospital = hospitalRepository.findById(hospitalId)
+                .orElseThrow(() -> new HospitalNotFoundException("Hospital not found"));
+
+        return hospitalAuthorityRepository.existsByHospitalAndUserId(hospital,userId);
+    }
 
 }

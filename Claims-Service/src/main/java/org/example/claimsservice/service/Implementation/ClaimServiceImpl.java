@@ -85,6 +85,10 @@ public class ClaimServiceImpl implements ClaimService{
         Claim claim = claimRepository.findById(request.claimId())
                 .orElseThrow(()-> new ClaimNotFoundException("Claim does not exist"));
 
+        if(!providerService.checkAssociation(request.providerId(),claim.getHospitalId())){
+            throw new UnauthorizedClaimReviewException("User not associated with this provider");
+        }
+
         if(!claim.getStage().equals(ClaimStage.PROVIDER)) {
             throw new InvalidStageException("Claim stage is not PROVIDER");
         }

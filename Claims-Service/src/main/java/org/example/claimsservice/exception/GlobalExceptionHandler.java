@@ -65,5 +65,9 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(UnauthorizedClaimReviewException.class)
+    public ResponseEntity<String> unauthorizedProviderReview(UnauthorizedClaimReviewException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
 }
 

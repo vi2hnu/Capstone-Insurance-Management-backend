@@ -26,23 +26,31 @@ public class ProviderController {
     }
 
     @PostMapping("/add/bank")
-    public ResponseEntity<HospitalBank> postMethodName(@RequestBody @Valid BankDetailsDTO request) {
+    public ResponseEntity<HospitalBank> addBank(@RequestBody @Valid BankDetailsDTO request) {
         return ResponseEntity.status(HttpStatus.OK).body(hospitalService.addHospitalBank(request));
     }
     
     @PostMapping("/register/plan")
-    public ResponseEntity<HospitalPlan> postMethodName(@RequestBody @Valid RegisterPlanDTO request) {
+    public ResponseEntity<HospitalPlan> registerPlan(@RequestBody @Valid RegisterPlanDTO request) {
         return ResponseEntity.status(HttpStatus.OK).body(hospitalService.registerPlan(request));
     }
 
     @GetMapping("/get/all/{planId}")
-    public ResponseEntity<List<HospitalPlan>> getMethodName(@PathVariable Long planId) {
+    public ResponseEntity<List<HospitalPlan>> getALlPlan(@PathVariable Long planId) {
         return ResponseEntity.status(HttpStatus.OK).body(hospitalService.getAllHospitalsByPlan(planId));
     }
 
-    @GetMapping("/check/{planId}/{hospitalId}")
-    public ResponseEntity<Boolean> checkMethodName(@PathVariable Long planId, @PathVariable Long hospitalId) {
+    @GetMapping("/check/plan/{planId}/{hospitalId}")
+    public ResponseEntity<Boolean> checkPlan(@PathVariable Long planId, @PathVariable Long hospitalId) {
         if(hospitalService.checkHospitalPlan(planId, hospitalId)) {
+            return ResponseEntity.status(HttpStatus.OK).body(true);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
+    }
+
+    @GetMapping("/check/association/{userId}/{hospitalId}")
+    public ResponseEntity<Boolean> checkAssociation( @PathVariable Long hospitalId, @PathVariable String userId) {
+        if(hospitalService.checkAssociation(userId, hospitalId)) {
             return ResponseEntity.status(HttpStatus.OK).body(true);
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);

@@ -18,4 +18,5 @@ public interface HospitalService {
     HospitalPlan registerPlan(RegisterPlanDTO request);
     List<HospitalPlan>  getAllHospitalsByPlan(Long planId);
     Boolean checkHospitalPlan(Long planId,Long hospitalId);
+    Boolean checkAssociation(String userId, Long hospitalId);
 }
