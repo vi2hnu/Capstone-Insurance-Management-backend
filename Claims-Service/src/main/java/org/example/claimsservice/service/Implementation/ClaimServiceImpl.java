@@ -6,16 +6,17 @@ import org.example.claimsservice.dto.AddClaimsDTO;
 import org.example.claimsservice.dto.ClaimsOfficerValidationDTO;
 import org.example.claimsservice.dto.ProviderVerificationDTO;
 import org.example.claimsservice.dto.PolicyDTO;
-import org.example.claimsservice.exception.ClaimAlreadySubmittedException;
-import org.example.claimsservice.exception.ClaimNotFoundException;
-import org.example.claimsservice.exception.InvalidPolicyClaimException;
-import org.example.claimsservice.exception.PolicyNotFoundException;
+import org.example.claimsservice.exception.*;
 import org.example.claimsservice.feign.PolicyService;
 import org.example.claimsservice.feign.ProviderService;
 import org.example.claimsservice.model.entity.Claim;
+import org.example.claimsservice.model.entity.ClaimReview;
 import org.example.claimsservice.model.enums.ClaimStage;
 import org.example.claimsservice.model.enums.ClaimStatus;
+import org.example.claimsservice.model.enums.ReviewStatus;
+import org.example.claimsservice.model.enums.ReviewerRole;
 import org.example.claimsservice.repository.ClaimRepository;
+import org.example.claimsservice.repository.ClaimReviewRepository;
 import org.example.claimsservice.service.ClaimService;
 import org.springframework.stereotype.Service;
 
@@ -25,12 +26,14 @@ public class ClaimServiceImpl implements ClaimService{
     private final ClaimRepository claimRepository;
     private final PolicyService policyService;
     private final ProviderService providerService;
+    private final ClaimReviewRepository claimReviewRepository;
     
     public ClaimServiceImpl(ClaimRepository claimRepository, PolicyService policyService,
-                            ProviderService providerService) {
+                            ProviderService providerService, ClaimReviewRepository claimReviewRepository) {
         this.claimRepository = claimRepository;
         this.policyService = policyService;
         this.providerService = providerService;
+        this.claimReviewRepository = claimReviewRepository;
     }
     
     @Override
@@ -73,7 +76,8 @@ public class ClaimServiceImpl implements ClaimService{
 
     @Override
     public List<Claim> getClaimByProviderId(Long providerId) {
-        return claimRepository.findByHospitalId(providerId);
+        return claimRepository.findByHospitalId(providerId).stream()
+                .filter(c -> c.getStage() == ClaimStage.PROVIDER).toList();
     }
 
     @Override
@@ -81,11 +85,16 @@ public class ClaimServiceImpl implements ClaimService{
         Claim claim = claimRepository.findById(request.claimId())
                 .orElseThrow(()-> new ClaimNotFoundException("Claim does not exist"));
 
-        if(!claim.getHospitalId().equals(request.providerId())) {
-            throw new ClaimNotFoundException("Claim is not registered under this provider");
+        if(!claim.getStage().equals(ClaimStage.PROVIDER)) {
+            throw new InvalidStageException("Claim stage is not PROVIDER");
         }
 
-        claim.setHospitalVerification(request.status());
+        ClaimReview claimReview = new ClaimReview(ReviewerRole.PROVIDER,request.providerId(),
+                request.status(),request.comments());
+
+        claimReviewRepository.save(claimReview);
+
+        claim.setProviderReview(claimReview);
         claim.setStage(ClaimStage.CLAIMS_OFFICER);
         claim.setStatus(ClaimStatus.IN_REVIEW);
         return claimRepository.save(claim);
@@ -96,7 +105,20 @@ public class ClaimServiceImpl implements ClaimService{
         Claim claim = claimRepository.findById(request.claimsId())
                 .orElseThrow(()-> new ClaimNotFoundException("Claim does not exist"));
 
-            claim.setStatus(request.claimStatus());
+        if(!claim.getStage().equals(ClaimStage.CLAIMS_OFFICER)) {
+            throw new InvalidStageException("Claim stage is not CLAIMS_OFFICER");
+        }
+        ClaimReview claimReview = new ClaimReview(ReviewerRole.CLAIMS_OFFICER,request.claimsOfficerId(),
+                request.status(),request.comments());
+
+        claimReviewRepository.save(claimReview);
+
+
+        claim.setClaimsOfficerReview(claimReview);
+        claim.setStatus(ClaimStatus.APPROVED);
+        if(!request.status().equals(ReviewStatus.APPROVED)) {
+            claim.setStatus(ClaimStatus.REJECTED);
+        }
         claim.setStage(ClaimStage.PAYMENT);
 
         //using kafka call the payment service

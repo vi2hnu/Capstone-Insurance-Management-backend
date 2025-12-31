@@ -2,16 +2,10 @@ package org.example.claimsservice.model.entity;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.*;
 import org.example.claimsservice.model.enums.ClaimStage;
 import org.example.claimsservice.model.enums.ClaimStatus;
-import org.example.claimsservice.model.enums.ProviderVerificationStatus;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import lombok.Data;
 
 @Entity
@@ -19,7 +13,7 @@ import lombok.Data;
 public class Claim {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    Long id;
     Long policyId;
     String userId;
     Long hospitalId;
@@ -27,17 +21,21 @@ public class Claim {
     String supportingDocument;  //cloudinary url
     LocalDateTime claimRequestDate;
 
-    @Enumerated(EnumType.STRING)
-    ProviderVerificationStatus  hospitalVerification;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "provider_review_id")
+    ClaimReview providerReview;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "officer_review_id")
+    ClaimReview claimsOfficerReview;
 
     @Enumerated(EnumType.STRING)
     ClaimStatus status;
 
     @Enumerated(EnumType.STRING)
     ClaimStage stage;
-    String reason;
 
-    public Claim(Long policyId, String userId, Long hospitalId, Double requestedAmount, String supportingDocument) {
+    public Claim(Long policyId, String userId, Long hospitalId,Double requestedAmount, String supportingDocument){
         this.policyId = policyId;
         this.userId = userId;
         this.hospitalId = hospitalId;
@@ -45,11 +43,11 @@ public class Claim {
         this.supportingDocument = supportingDocument;
         this.claimRequestDate = LocalDateTime.now();
         this.status = ClaimStatus.SUBMITTED;
-        this.stage = ClaimStage.PROVIDER;
-        this.hospitalVerification = ProviderVerificationStatus.PENDING;
+        this.stage  = ClaimStage.PROVIDER;
     }
 
-    public Claim() {
+    public Claim(){
         
     }
+
 }

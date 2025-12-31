@@ -59,5 +59,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> claimNotFound(ClaimNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(InvalidStageException.class)
+    public ResponseEntity<String> invalidClaimStage(InvalidStageException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
 }
 

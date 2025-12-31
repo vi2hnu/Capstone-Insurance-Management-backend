@@ -2,7 +2,7 @@ package org.example.claimsservice.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import org.example.claimsservice.model.enums.ClaimStatus;
+import org.example.claimsservice.model.enums.ReviewStatus;
 
 public record ClaimsOfficerValidationDTO(
         @NotNull
@@ -11,6 +11,8 @@ public record ClaimsOfficerValidationDTO(
         @NotBlank
         String claimsOfficerId,
 
-        ClaimStatus claimStatus
+        ReviewStatus status,
+
+        String comments
 )
 {}
