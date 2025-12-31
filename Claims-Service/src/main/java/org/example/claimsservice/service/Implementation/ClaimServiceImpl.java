@@ -2,6 +2,8 @@ package org.example.claimsservice.service.Implementation;
 
 import java.util.List;
 
+import feign.FeignException;
+import lombok.extern.slf4j.Slf4j;
 import org.example.claimsservice.dto.AddClaimsDTO;
 import org.example.claimsservice.dto.ClaimsOfficerValidationDTO;
 import org.example.claimsservice.dto.ProviderVerificationDTO;
@@ -20,6 +22,7 @@ import org.example.claimsservice.repository.ClaimReviewRepository;
 import org.example.claimsservice.service.ClaimService;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class ClaimServiceImpl implements ClaimService{
 
@@ -39,8 +42,14 @@ public class ClaimServiceImpl implements ClaimService{
     @Override
     public Claim addClaim(AddClaimsDTO request) {
 
-        PolicyDTO policy = policyService.getPolicyById(request.policyId());
-        if(policy == null || !policy.status().equals("ACTIVE")) {
+        PolicyDTO policy;
+        try {
+            policy = policyService.getPolicyById(request.policyId());
+        } catch (FeignException.NotFound ex) {
+            throw new PolicyNotFoundException("Policy not found");
+        }
+
+        if(policy==null || !policy.status().equals("ACTIVE")) {
             throw new PolicyNotFoundException("Policy not found");
         }
 
@@ -84,8 +93,10 @@ public class ClaimServiceImpl implements ClaimService{
     public Claim providerVerification(ProviderVerificationDTO request) {
         Claim claim = claimRepository.findById(request.claimId())
                 .orElseThrow(()-> new ClaimNotFoundException("Claim does not exist"));
-
-        if(!providerService.checkAssociation(request.providerId(),claim.getHospitalId())){
+        try {
+           Boolean associated = providerService.checkAssociation(request.providerId(), claim.getHospitalId());
+        }
+        catch (FeignException.BadRequest ex) {
             throw new UnauthorizedClaimReviewException("User not associated with this provider");
         }
 
@@ -122,6 +133,8 @@ public class ClaimServiceImpl implements ClaimService{
         claim.setStatus(ClaimStatus.APPROVED);
         if(!request.status().equals(ReviewStatus.APPROVED)) {
             claim.setStatus(ClaimStatus.REJECTED);
+            claim.setStage(ClaimStage.COMPLETED);
+            return claimRepository.save(claim);
         }
         claim.setStage(ClaimStage.PAYMENT);
 
