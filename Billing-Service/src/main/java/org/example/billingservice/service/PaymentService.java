@@ -7,5 +7,5 @@ import org.example.billingservice.model.entity.Transaction;
 
 public interface PaymentService {
     Transaction createOrder(CreateOrderDTO request) throws RazorpayException;
-    Transaction verifyPayment(VerifyPaymentDTO request) throws RazorpayException;
+    Boolean verifyPayment(VerifyPaymentDTO request) throws RazorpayException;
 }

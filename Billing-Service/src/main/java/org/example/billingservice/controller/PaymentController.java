@@ -25,7 +25,7 @@ public class PaymentController {
     }
 
     @PostMapping("/verify/order")
-    public ResponseEntity<Transaction> verifyOrder(@RequestBody @Valid VerifyPaymentDTO request) throws RazorpayException {
-        return ResponseEntity.status(HttpStatus.CREATED).body(paymentService.verifyPayment(request));
+    public ResponseEntity<Boolean> verifyOrder(@RequestBody @Valid VerifyPaymentDTO request) throws RazorpayException {
+        return ResponseEntity.status(HttpStatus.ok).body(paymentService.verifyPayment(request));
     }
 }

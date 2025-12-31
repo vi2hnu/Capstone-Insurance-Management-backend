@@ -55,8 +55,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public Transaction verifyPayment(VerifyPaymentDTO request) throws RazorpayException {
-
+    public Boolean verifyPayment(VerifyPaymentDTO request) throws RazorpayException {
         Transaction transaction = transactionRepository
                 .findByOrderId(request.razorpayOrderId());
         if(transaction==null){
@@ -75,13 +74,13 @@ public class PaymentServiceImpl implements PaymentService {
             transaction.setPaymentId(request.razorpayPaymentId());
             if (!isValid) {
                 transaction.setStatus(Status.FAILURE);
-                return transactionRepository.save(transaction);
+                transactionRepository.save(transaction);
+                return false;
             }
 
-            transaction.setPaymentId(request.razorpayPaymentId());
             transaction.setStatus(Status.SUCCESS);
-
-            return transactionRepository.save(transaction);
+            transactionRepository.save(transaction);
+            return true;
 
         } catch (Exception e) {
             throw new RazorpayException("Payment verification failed");
