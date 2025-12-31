@@ -69,5 +69,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> unauthorizedProviderReview(UnauthorizedClaimReviewException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
+
+    @ExceptionHandler(NoBankDetailsFoundException.class)
+    public ResponseEntity<String> noBankDetailsFound(NoBankDetailsFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
 }
 

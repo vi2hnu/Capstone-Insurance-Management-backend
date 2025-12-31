@@ -4,11 +4,9 @@ import java.util.List;
 
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
-import org.example.claimsservice.dto.AddClaimsDTO;
-import org.example.claimsservice.dto.ClaimsOfficerValidationDTO;
-import org.example.claimsservice.dto.ProviderVerificationDTO;
-import org.example.claimsservice.dto.PolicyDTO;
+import org.example.claimsservice.dto.*;
 import org.example.claimsservice.exception.*;
+import org.example.claimsservice.feign.IdentityService;
 import org.example.claimsservice.feign.PolicyService;
 import org.example.claimsservice.feign.ProviderService;
 import org.example.claimsservice.model.entity.Claim;
@@ -30,17 +28,24 @@ public class ClaimServiceImpl implements ClaimService{
     private final PolicyService policyService;
     private final ProviderService providerService;
     private final ClaimReviewRepository claimReviewRepository;
+    private final IdentityService identityService;
     
     public ClaimServiceImpl(ClaimRepository claimRepository, PolicyService policyService,
-                            ProviderService providerService, ClaimReviewRepository claimReviewRepository) {
+                            ProviderService providerService, ClaimReviewRepository claimReviewRepository,
+                            IdentityService identityService) {
         this.claimRepository = claimRepository;
         this.policyService = policyService;
         this.providerService = providerService;
         this.claimReviewRepository = claimReviewRepository;
+        this.identityService = identityService;
     }
     
     @Override
     public Claim addClaim(AddClaimsDTO request) {
+        UserDTO user = identityService.getUser(request.userId());
+        if(user.bankAccount()==null){
+            throw new NoBankDetailsFoundException("No bank account found");
+        }
 
         PolicyDTO policy;
         try {
