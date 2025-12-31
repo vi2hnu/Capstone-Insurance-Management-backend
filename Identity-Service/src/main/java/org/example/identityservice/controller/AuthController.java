@@ -2,6 +2,7 @@ package org.example.identityservice.controller;
 
 import java.util.List;
 
+import org.example.identityservice.dto.AddBankDTO;
 import org.example.identityservice.dto.ChangePasswordDTO;
 import org.example.identityservice.dto.CheckUserDTO;
 import org.example.identityservice.dto.GenerateOtpDTO;
@@ -108,6 +109,11 @@ public class AuthController {
     public ResponseEntity<List<UserDTO>> getUserList(@RequestBody List<String> ids) {
         return ResponseEntity.ok(authService.getAllUsers(ids));
     }
-    
+
+    @PostMapping("/add/bank")
+    public ResponseEntity<MessageResponse> addBank(@RequestBody AddBankDTO request){
+        authService.addBank(request);
+        return ResponseEntity.ok(new MessageResponse("User bank details has been added"));
+    }
 
 }

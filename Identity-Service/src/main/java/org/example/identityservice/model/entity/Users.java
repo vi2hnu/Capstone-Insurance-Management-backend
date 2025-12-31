@@ -1,13 +1,14 @@
 package org.example.identityservice.model.entity;
 
-import lombok.Data;
+import java.util.Date;
+
 import org.example.identityservice.model.enums.Gender;
 import org.example.identityservice.model.enums.Role;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Date;
+import lombok.Data;
 
 @Data
 @Document(collection = "Users")
@@ -25,6 +26,7 @@ public class Users {
     Date lastPasswordChange;
     Gender gender;
     Role role;
+    BankAccount bankAccount;
 
     public Users(String name,String username, String email, String password,Date lastPasswordChange, Gender gender){
         this.name = name;

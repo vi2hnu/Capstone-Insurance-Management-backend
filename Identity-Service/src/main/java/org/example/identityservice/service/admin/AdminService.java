@@ -29,7 +29,7 @@ public class AdminService {
         List<UserDTO> result = new ArrayList<>();
         users.stream()
                 .forEach(user -> {
-                    result.add(new UserDTO(user.getId(), user.getUsername(),user.getName(),user.getEmail(),user.getGender(),user.getRole()));
+                    result.add(new UserDTO(user.getId(), user.getUsername(),user.getName(),user.getEmail(),user.getGender(),user.getRole(),user.getBankAccount()));
                 });
         return result;
     }

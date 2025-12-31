@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import org.example.identityservice.dto.AddBankDTO;
 import org.example.identityservice.dto.ChangePasswordDTO;
 import org.example.identityservice.dto.CheckUserDTO;
 import org.example.identityservice.dto.GetUserDTO;
@@ -12,6 +13,8 @@ import org.example.identityservice.dto.LoginDTO;
 import org.example.identityservice.dto.LoginRessultDTO;
 import org.example.identityservice.dto.SignupDTO;
 import org.example.identityservice.dto.UserDTO;
+import org.example.identityservice.exception.UsersNotFoundException;
+import org.example.identityservice.model.entity.BankAccount;
 import org.example.identityservice.model.entity.Users;
 import org.example.identityservice.model.enums.Role;
 import org.example.identityservice.repository.UsersRepository;
@@ -89,7 +92,7 @@ public class AuthService {
 
     public UserDTO getUser(GetUserDTO dto){
         Users user = userRepository.findUsersByUsername(dto.username());
-        return  new UserDTO(user.getId(), user.getUsername(),user.getName(),user.getEmail(),user.getGender(),user.getRole());
+        return  new UserDTO(user.getId(), user.getUsername(),user.getName(),user.getEmail(),user.getGender(),user.getRole(), user.getBankAccount());
     }
 
     public void changePassword(ChangePasswordDTO request){
@@ -128,13 +131,24 @@ public class AuthService {
         if (user == null) {
             return null;
         }
-        return new UserDTO(user.getId(), user.getUsername(), user.getName(), user.getEmail(), user.getGender(), user.getRole());
+        return new UserDTO(user.getId(), user.getUsername(), user.getName(), user.getEmail(), user.getGender(), user.getRole(), user.getBankAccount());
     }
 
     public List<UserDTO> getAllUsers(List<String> ids) {
         List<Users> users = userRepository.findAllById(ids);
         return users.stream()
-            .map(user -> new UserDTO(user.getId(), user.getUsername(), user.getName(), user.getEmail(), user.getGender(), user.getRole()))
+            .map(user -> new UserDTO(user.getId(), user.getUsername(), user.getName(), user.getEmail(), user.getGender(), user.getRole(), user.getBankAccount()))
             .collect(Collectors.toList());
+    }
+
+    public UserDTO addBank(AddBankDTO request) {
+        Users user = userRepository.findById(request.userId()).orElse(null);
+        if (user == null) {
+            throw new UsersNotFoundException("User not found");
+        }
+        BankAccount bankAccount = new BankAccount(request.bankName(), request.accountNumber(), request.ifscCode());
+        user.setBankAccount(bankAccount);
+        userRepository.save(user);
+        return new UserDTO(user.getId(), user.getUsername(), user.getName(), user.getEmail(), user.getGender(), user.getRole(), user.getBankAccount());
     }
 }
