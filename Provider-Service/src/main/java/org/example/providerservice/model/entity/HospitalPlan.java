@@ -2,7 +2,7 @@ package org.example.providerservice.model.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.example.providerservice.model.enums.Type;
+import org.example.providerservice.model.enums.NetworkType;
 
 @Entity
 @Data
@@ -17,9 +17,9 @@ public class HospitalPlan {
     Long planId;
 
     @Enumerated(EnumType.STRING)
-    Type networkType;
+    NetworkType networkType;
 
-    public HospitalPlan(Hospital hospital, Long planId, Type networkType) {
+    public HospitalPlan(Hospital hospital, Long planId, NetworkType networkType) {
         this.hospital = hospital;
         this.planId = planId;
         this.networkType = networkType;

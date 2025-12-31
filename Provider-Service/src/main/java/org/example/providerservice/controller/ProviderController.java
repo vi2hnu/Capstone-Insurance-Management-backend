@@ -1,10 +1,10 @@
 package org.example.providerservice.controller;
 
-import org.apache.catalina.connector.Response;
 import org.example.providerservice.dto.BankDetailsDTO;
 import org.example.providerservice.dto.RegisterPlanDTO;
 import org.example.providerservice.model.entity.HospitalBank;
 import org.example.providerservice.model.entity.HospitalPlan;
+import org.example.providerservice.model.enums.NetworkType;
 import org.example.providerservice.service.HospitalService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,18 +42,17 @@ public class ProviderController {
 
     @GetMapping("/check/plan/{planId}/{hospitalId}")
     public ResponseEntity<Boolean> checkPlan(@PathVariable Long planId, @PathVariable Long hospitalId) {
-        if(hospitalService.checkHospitalPlan(planId, hospitalId)) {
-            return ResponseEntity.status(HttpStatus.OK).body(true);
-        }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
+        return ResponseEntity.status(HttpStatus.OK).body(hospitalService.checkHospitalPlan(planId, hospitalId));
     }
 
     @GetMapping("/check/association/{userId}/{hospitalId}")
     public ResponseEntity<Boolean> checkAssociation( @PathVariable Long hospitalId, @PathVariable String userId) {
-        if(hospitalService.checkAssociation(userId, hospitalId)) {
-            return ResponseEntity.status(HttpStatus.OK).body(true);
-        }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
+        return ResponseEntity.status(HttpStatus.OK).body(hospitalService.checkAssociation(userId, hospitalId));
+    }
+
+    @GetMapping("/get/type/{planId}/{hospitalId}")
+    public ResponseEntity<NetworkType>  getProviderType(@PathVariable Long planId, @PathVariable Long hospitalId) {
+        return ResponseEntity.status(HttpStatus.OK).body(hospitalService.getProviderType(planId, hospitalId));
     }
 
 }

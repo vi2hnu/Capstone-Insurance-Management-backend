@@ -13,7 +13,7 @@ import org.example.providerservice.model.entity.Hospital;
 import org.example.providerservice.model.entity.HospitalAuthority;
 import org.example.providerservice.model.entity.HospitalBank;
 import org.example.providerservice.model.entity.HospitalPlan;
-import org.example.providerservice.model.enums.Type;
+import org.example.providerservice.model.enums.NetworkType;
 import org.example.providerservice.repository.HospitalAuthorityRepository;
 import org.example.providerservice.repository.HospitalBankRepository;
 import org.example.providerservice.repository.HospitalPlanRepository;
@@ -80,11 +80,11 @@ public class HospitalServiceImpl implements HospitalService {
             throw new PlanAlreadyRegisteredException("Plan already registered for this hospital");
         }
 
-        if(request.type()== Type.IN_NETWORK && !hospitalBankRepository.existsByHospital(hospital)){
+        if(request.networkType()== NetworkType.IN_NETWORK && !hospitalBankRepository.existsByHospital(hospital)){
             throw new HospitalBankNotFoundException("Hospital bank not found");
         }
 
-        HospitalPlan hospitalPlan = new HospitalPlan(hospital,request.planId(),request.type());
+        HospitalPlan hospitalPlan = new HospitalPlan(hospital,request.planId(),request.networkType());
         return hospitalPlanRepository.save(hospitalPlan);
     }
 
@@ -108,6 +108,14 @@ public class HospitalServiceImpl implements HospitalService {
                 .orElseThrow(() -> new HospitalNotFoundException("Hospital not found"));
 
         return hospitalAuthorityRepository.existsByHospitalAndUserId(hospital,userId);
+    }
+
+    @Override
+    public NetworkType getProviderType(Long planId, Long hospitalId) {
+        Hospital hospital = hospitalRepository.findById(hospitalId)
+                .orElseThrow(() -> new HospitalNotFoundException("Hospital not found"));
+        HospitalPlan hospitalPlan =  hospitalPlanRepository.findByHospitalAndPlanId(hospital, planId);
+        return hospitalPlan.getNetworkType();
     }
 
 }

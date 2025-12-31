@@ -9,4 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface HospitalPlanRepository extends JpaRepository<HospitalPlan, Long> {
     Boolean existsByHospitalAndPlanId(Hospital hospital, Long planId);
     List<HospitalPlan> findByPlanId(Long planId);
+    HospitalPlan findByHospitalAndPlanId(Hospital hospital, Long planId);
 }

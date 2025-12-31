@@ -1,6 +1,6 @@
 package org.example.providerservice.dto;
 
-import org.example.providerservice.model.enums.Type;
+import org.example.providerservice.model.enums.NetworkType;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -16,5 +16,5 @@ public record RegisterPlanDTO(
     @NotNull
     Long planId,
 
-    Type type
+    NetworkType networkType
 ) {}

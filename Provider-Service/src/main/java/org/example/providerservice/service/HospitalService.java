@@ -10,6 +10,7 @@ import org.example.providerservice.model.entity.Hospital;
 import org.example.providerservice.model.entity.HospitalAuthority;
 import org.example.providerservice.model.entity.HospitalBank;
 import org.example.providerservice.model.entity.HospitalPlan;
+import org.example.providerservice.model.enums.NetworkType;
 
 public interface HospitalService {
     Hospital addHospital(AddHospitalDTO request);
@@ -19,4 +20,5 @@ public interface HospitalService {
     List<HospitalPlan>  getAllHospitalsByPlan(Long planId);
     Boolean checkHospitalPlan(Long planId,Long hospitalId);
     Boolean checkAssociation(String userId, Long hospitalId);
+    NetworkType getProviderType(Long planId, Long hospitalId);
 }
