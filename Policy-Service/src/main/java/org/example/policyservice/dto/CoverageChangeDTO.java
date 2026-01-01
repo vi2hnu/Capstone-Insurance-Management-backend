@@ -7,8 +7,6 @@ public record CoverageChangeDTO(
         Long policyId,
 
         @NotNull
-        Double claimedAmount,
-
-        String agentId
+        Double claimedAmount
 )
 {}

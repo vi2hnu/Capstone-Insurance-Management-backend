@@ -25,7 +25,7 @@ public class AgentController {
 
     @PostMapping("/get/user")
     public ResponseEntity<String> enrollUser(@RequestBody  @Valid GetUserIdDTO request){
-        return ResponseEntity.status(HttpStatus.OK).body(feignClient.getUserId(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(feignClient.getUserId(request));
     }
 
     @GetMapping("/get/all/enrollment/{agentId}")

@@ -107,10 +107,6 @@ public class PolicyServiceImpl implements PolicyService {
         Policy policy = policyRepository.findById(request.policyId())
                 .orElseThrow(()->new PolicyNotFoundException("User not enrolled in policy"));
 
-        if(!Objects.equals(policy.getAgentId(), request.agentId())){
-            throw new PolicyNotEnrolledByAgentException("Policy was not enrolled by agent");
-        }
-
         if(policy.getStatus()!=Status.ACTIVE){
             throw new UserNotEnrolledException("User not enrolled in policy");
         }

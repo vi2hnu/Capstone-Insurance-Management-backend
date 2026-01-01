@@ -23,6 +23,6 @@ public class AdminController {
 
     @PostMapping("/plan/add")
     public ResponseEntity<Plan> addPlan(@RequestBody @Valid PlanDTO request){
-        return ResponseEntity.status(HttpStatus.OK).body(planService.addPlan(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(planService.addPlan(request));
     }
 }

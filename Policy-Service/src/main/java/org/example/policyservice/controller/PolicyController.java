@@ -24,7 +24,7 @@ public class PolicyController {
 
     @PostMapping("/enroll")
     public ResponseEntity<Policy> enrollUser(@RequestBody @Valid PolicyEnrollDTO request){
-        return ResponseEntity.status(HttpStatus.OK).body(policyService.enrollUser(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(policyService.enrollUser(request));
     }
 
     @DeleteMapping("/cancel")
@@ -35,7 +35,7 @@ public class PolicyController {
 
     @PostMapping("/renew")
     public ResponseEntity<Policy> renewPolicy(@RequestBody @Valid PolicyUserDTO request){
-        return ResponseEntity.status(HttpStatus.OK).body(policyService.renewPolicy(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(policyService.renewPolicy(request));
     }
 
     @GetMapping("/get/all/{userId}")
