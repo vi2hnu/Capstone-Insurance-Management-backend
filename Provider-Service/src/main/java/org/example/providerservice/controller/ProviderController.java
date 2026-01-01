@@ -25,12 +25,12 @@ public class ProviderController {
         this.hospitalService = hospitalService;
     }
 
-    @PostMapping("/add/bank")
+    @PostMapping("/authority/add/bank")
     public ResponseEntity<HospitalBank> addBank(@RequestBody @Valid BankDetailsDTO request) {
         return ResponseEntity.status(HttpStatus.OK).body(hospitalService.addHospitalBank(request));
     }
     
-    @PostMapping("/register/plan")
+    @PostMapping("/authority/register/plan")
     public ResponseEntity<HospitalPlan> registerPlan(@RequestBody @Valid RegisterPlanDTO request) {
         return ResponseEntity.status(HttpStatus.OK).body(hospitalService.registerPlan(request));
     }

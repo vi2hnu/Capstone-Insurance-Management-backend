@@ -2,7 +2,7 @@ package org.example.policyservice.controller;
 
 import jakarta.validation.Valid;
 import org.example.policyservice.dto.GetUserIdDTO;
-import org.example.policyservice.feign.FeignClient;
+import org.example.policyservice.feign.IdentityService;
 import org.example.policyservice.model.entity.Policy;
 import org.example.policyservice.service.PolicyService;
 import org.springframework.http.HttpStatus;
@@ -15,17 +15,18 @@ import java.util.List;
 @RequestMapping("/api/agent")
 public class AgentController {
 
-    private final FeignClient feignClient;
+    private final IdentityService identityService;
     private final PolicyService policyService;
 
-    public AgentController(FeignClient feignClient, PolicyService policyService) {
-        this.feignClient = feignClient;
+    public AgentController(IdentityService identityService, PolicyService policyService) {
+        this.identityService = identityService;
         this.policyService = policyService;
     }
 
+    //agent first enters details of user to either create or get existing account
     @PostMapping("/get/user")
     public ResponseEntity<String> enrollUser(@RequestBody  @Valid GetUserIdDTO request){
-        return ResponseEntity.status(HttpStatus.CREATED).body(feignClient.getUserId(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(identityService.getUserId(request));
     }
 
     @GetMapping("/get/all/enrollment/{agentId}")
