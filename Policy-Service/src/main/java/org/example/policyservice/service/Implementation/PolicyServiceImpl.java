@@ -1,21 +1,27 @@
 package org.example.policyservice.service.Implementation;
 
-import lombok.extern.slf4j.Slf4j;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Objects;
+
 import org.example.policyservice.dto.CoverageChangeDTO;
-import org.example.policyservice.dto.PolicyUserDTO;
 import org.example.policyservice.dto.PolicyEnrollDTO;
-import org.example.policyservice.exception.*;
+import org.example.policyservice.dto.PolicyUserDTO;
+import org.example.policyservice.exception.PlanNotFoundException;
+import org.example.policyservice.exception.PolicyNotEnrolledByAgentException;
+import org.example.policyservice.exception.PolicyNotFoundException;
+import org.example.policyservice.exception.UserAlreadyEnrolledException;
+import org.example.policyservice.exception.UserNotEnrolledException;
 import org.example.policyservice.model.entity.Plan;
 import org.example.policyservice.model.entity.Policy;
 import org.example.policyservice.model.enums.Status;
 import org.example.policyservice.repository.PlanRepository;
 import org.example.policyservice.repository.PolicyUserRepository;
 import org.example.policyservice.service.PolicyService;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Objects;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -23,10 +29,12 @@ public class PolicyServiceImpl implements PolicyService {
 
     private final PlanRepository planRepository;
     private final PolicyUserRepository policyRepository;
+    private final KafkaTemplate<String, Policy> kafkaTemplate;
 
-    public PolicyServiceImpl(PlanRepository planRepository ,PolicyUserRepository policyRepository){
+    public PolicyServiceImpl(PlanRepository planRepository ,PolicyUserRepository policyRepository, KafkaTemplate<String, Policy> kafkaTemplate){
         this.planRepository = planRepository;
         this.policyRepository = policyRepository;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     @Override
@@ -46,9 +54,11 @@ public class PolicyServiceImpl implements PolicyService {
         Policy policy = new Policy(plan,request.userId(),LocalDate.now(),
                 LocalDate.now().plusMonths(plan.getDuration()), Status.ACTIVE,plan.getCoverageAmount(), 0);
 
-        // send email to user
         policy.setAgentId(request.agentId());
-        return policyRepository.save(policy);
+
+        policyRepository.save(policy);
+        kafkaTemplate.send("policy-purchase-email", policy);
+        return policy;
     }
 
     @Override
@@ -92,9 +102,11 @@ public class PolicyServiceImpl implements PolicyService {
 
         policy.setRenewalCounter(policy.getRenewalCounter()+1);
         policy.setEndDate(policy.getEndDate().plusMonths(policy.getPlan().getDuration()));
-        //send email
 
-        return policyRepository.save(policy);
+
+        policyRepository.save(policy);
+        kafkaTemplate.send("policy-purchase-email", policy);
+        return policy;
     }
 
     @Override

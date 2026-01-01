@@ -10,6 +10,7 @@ import org.example.identityservice.dto.CreateUserDTO;
 import org.example.identityservice.dto.UserDTO;
 import org.example.identityservice.model.entity.Users;
 import org.example.identityservice.repository.UsersRepository;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,10 +19,12 @@ public class AdminServiceImpl implements AdminService {
 
     private final UsersRepository usersRepository;
     private final PasswordEncoder encoder;
+    private final KafkaTemplate<String, Users> kafkaTemplate;
 
-    public AdminServiceImpl(UsersRepository usersRepository, PasswordEncoder encoder) {
+    public AdminServiceImpl(UsersRepository usersRepository, PasswordEncoder encoder, KafkaTemplate<String, Users> kafkaTemplate) {
         this.usersRepository = usersRepository;
         this.encoder = encoder;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     @Override
@@ -46,12 +49,16 @@ public class AdminServiceImpl implements AdminService {
         }
 
         Users user = new Users(dto.name(), dto.username(),
-                dto.email(),
-                encoder.encode(dto.password()), new Date(), dto.gender());
+                dto.email(),encoder.encode(dto.password()), new Date(), dto.gender());
         user.setRole(dto.role());
         Date oneYearAgo = Date.from(Instant.now().minus(365, ChronoUnit.DAYS));
         user.setLastPasswordChange(oneYearAgo);
-        return usersRepository.save(user);
+        
+        usersRepository.save(user);
+        Users tempUser = new Users(dto.name(), dto.username(),
+                dto.email(),dto.password(), new Date(), dto.gender());
+        kafkaTemplate.send("account-activation-email", tempUser);
+        return user;
     }
 
 

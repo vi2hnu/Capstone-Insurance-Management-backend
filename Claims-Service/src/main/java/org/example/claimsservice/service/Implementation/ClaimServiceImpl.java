@@ -4,6 +4,7 @@ import java.util.List;
 
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
+
 import org.example.claimsservice.dto.*;
 import org.example.claimsservice.exception.*;
 import org.example.claimsservice.feign.IdentityService;
@@ -18,6 +19,7 @@ import org.example.claimsservice.model.enums.ReviewerRole;
 import org.example.claimsservice.repository.ClaimRepository;
 import org.example.claimsservice.repository.ClaimReviewRepository;
 import org.example.claimsservice.service.ClaimService;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -29,15 +31,17 @@ public class ClaimServiceImpl implements ClaimService{
     private final ProviderService providerService;
     private final ClaimReviewRepository claimReviewRepository;
     private final IdentityService identityService;
+    private final KafkaTemplate<String, Claim> kafkaTemplate;
     
     public ClaimServiceImpl(ClaimRepository claimRepository, PolicyService policyService,
                             ProviderService providerService, ClaimReviewRepository claimReviewRepository,
-                            IdentityService identityService) {
+                            IdentityService identityService, KafkaTemplate<String, Claim> kafkaTemplate) {
         this.claimRepository = claimRepository;
         this.policyService = policyService;
         this.providerService = providerService;
         this.claimReviewRepository = claimReviewRepository;
         this.identityService = identityService;
+        this.kafkaTemplate = kafkaTemplate;
     }
     
     @Override
@@ -75,7 +79,9 @@ public class ClaimServiceImpl implements ClaimService{
 
         Claim claim = new Claim(request.policyId(), request.userId(), 
         request.hospitalId(), request.requestedAmount(), request.supportingDocument());
-        return claimRepository.save(claim);
+        claimRepository.save(claim);
+        kafkaTemplate.send("claim-submission-email", claim);
+        return claim;
     }
 
     @Override
@@ -145,7 +151,11 @@ public class ClaimServiceImpl implements ClaimService{
 
         //using kafka call the payment service
 
-        return claimRepository.save(claim);
+        claimRepository.save(claim);
+        
+        kafkaTemplate.send("claim-decision-email",claim);
+
+        return claim;
     }
 
     @Override

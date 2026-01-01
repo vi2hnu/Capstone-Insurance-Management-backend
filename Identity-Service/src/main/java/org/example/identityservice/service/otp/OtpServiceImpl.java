@@ -4,18 +4,22 @@ import java.security.SecureRandom;
 import java.time.Duration;
 import java.util.Objects;
 
+import org.example.identityservice.dto.OtpMailDTO;
 import org.example.identityservice.dto.ValidateOtpDTO;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
 public class OtpServiceImpl implements OtpService {
 
     private final StringRedisTemplate redisTemplate;
+    private final KafkaTemplate<String, OtpMailDTO> kafkaTemplate;
     private static final SecureRandom random = new SecureRandom();
 
-    public OtpServiceImpl(StringRedisTemplate redisTemplate){
+    public OtpServiceImpl(StringRedisTemplate redisTemplate, KafkaTemplate<String, OtpMailDTO> kafkaTemplate){
         this.redisTemplate  =redisTemplate;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     public int randomNumbers() {
@@ -26,10 +30,8 @@ public class OtpServiceImpl implements OtpService {
     public String generateOtp(String email){
         String otp = String.valueOf(randomNumbers());
         redisTemplate.opsForValue().set(email,otp, Duration.ofMinutes(15));
-
-        //kafka will later be implemented here to send the opt as email to user
-
-        //we won't be sending opt to user in final version
+        OtpMailDTO otpMail = new OtpMailDTO(email, otp);
+        kafkaTemplate.send("otp-email", otpMail);
         return otp;
 
     }

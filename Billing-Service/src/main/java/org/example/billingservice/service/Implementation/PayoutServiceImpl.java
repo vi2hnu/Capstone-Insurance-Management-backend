@@ -12,6 +12,7 @@ import org.example.billingservice.model.entity.ProviderPayout;
 import org.example.billingservice.model.entity.UserPayout;
 import org.example.billingservice.model.enums.ProviderType;
 import org.example.billingservice.service.PayoutService;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 ;
 
@@ -23,15 +24,17 @@ public class PayoutServiceImpl implements PayoutService {
     private final ProviderPayoutRepository  providerPayoutRepository;
     private final UserPayoutRepository  userPayoutRepository;
     private final ClaimService claimService;
+    private final KafkaTemplate<String,UserPayout> kafkaTemplate;
 
     public PayoutServiceImpl(PolicyService policyService,ProviderService providerService,
                              ProviderPayoutRepository providerPayoutRepository, UserPayoutRepository userPayoutRepository,
-                             ClaimService claimService) {
+                             ClaimService claimService, KafkaTemplate<String,UserPayout> kafkaTemplate) {
         this.policyService = policyService;
         this.providerService = providerService;
         this.providerPayoutRepository = providerPayoutRepository;
         this.userPayoutRepository = userPayoutRepository;
         this.claimService = claimService;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     @Override
@@ -51,10 +54,11 @@ public class PayoutServiceImpl implements PayoutService {
 
     private void payHospital(PayoutDTO request){
         providerPayoutRepository.save(new ProviderPayout(request.providerId(), request.claimId(), request.amount()));
-
     }
 
     private void payUser(PayoutDTO request){
-        userPayoutRepository.save(new UserPayout(request.userId(), request.claimId(), request.amount()));
+        UserPayout payout =new UserPayout(request.userId(), request.claimId(), request.amount());
+        userPayoutRepository.save(payout);
+        kafkaTemplate.send("payout-email",payout);
     }
 }

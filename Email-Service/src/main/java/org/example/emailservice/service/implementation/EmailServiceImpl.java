@@ -66,7 +66,7 @@ public class EmailServiceImpl implements EmailService{
 
     @Override
     public void sendAdminAccountCreationDetails(UserDTO request) {
-        String message = "Greetings, " + request.name() + " has been created as an admin.\n\n"
+        String message = "Greetings, " + request.name() + " your account has been created by admin.\n\n"
                 + "Username: " + request.username() + "\n"
                 + "Password: " + request.password() + "\n\n"
                 + "Please change your password after your first login.\n\n";
@@ -83,7 +83,7 @@ public class EmailServiceImpl implements EmailService{
     @Override
     public void sendClaimSubmissionDetails(ClaimDTO request) {
         UserDTO user = identityService.getUserById(request.userId());
-        String message = "Hi " + user.name() + ",\n\n"
+        String message = "Greetings " + user.name() + ",\n\n"
                 + "Your claim request has been submitted successfully.\n"
                 + "Policy ID: " + request.policyId() + "\n"
                 + "Requested Amount: RS." + request.requestedAmount() + "\n"
