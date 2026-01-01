@@ -148,5 +148,15 @@ public class ClaimServiceImpl implements ClaimService{
         return claimRepository.save(claim);
     }
 
+    @Override
+    public Claim changeStatus(Long claimId) {
+        Claim claim = claimRepository.findById(claimId)
+                .orElseThrow(()-> new ClaimNotFoundException("Claim does not exist"));
+
+        claim.setStage(ClaimStage.COMPLETED);
+        claim.setStatus(ClaimStatus.PAID);
+        return claimRepository.save(claim);
+    }
+
 
 }

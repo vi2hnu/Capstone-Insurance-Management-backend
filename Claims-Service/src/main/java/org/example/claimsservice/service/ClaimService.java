@@ -14,4 +14,5 @@ public interface ClaimService {
     List<Claim> getClaimByProviderId(Long providerId);
     Claim providerVerification(ProviderVerificationDTO request);
     Claim claimsOfficerValidation(ClaimsOfficerValidationDTO request);
+    Claim changeStatus(Long claimId);
 }
