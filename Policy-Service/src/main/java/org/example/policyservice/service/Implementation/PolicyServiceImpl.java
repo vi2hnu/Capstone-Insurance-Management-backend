@@ -19,6 +19,7 @@ import org.example.policyservice.repository.PlanRepository;
 import org.example.policyservice.repository.PolicyUserRepository;
 import org.example.policyservice.service.PolicyService;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
@@ -138,5 +139,15 @@ public class PolicyServiceImpl implements PolicyService {
                 .orElseThrow(() -> new PolicyNotFoundException("Policy does not exist: " + policyId));
     }
 
+    @Scheduled(cron = "0 0 9 * * ?")
+    public void sendRenewalReminder(){
+        LocalDate reminderDate = LocalDate.now().plusDays(7);
+        List<Policy> policies = policyRepository.findByEndDateAndStatus(reminderDate, Status.ACTIVE);
+        policies.stream().forEach(policy -> {
+            log.info(policy.toString());
+            kafkaTemplate.send("policy-renewal-reminder",policy);
+        });
+
+    }
 
 }
