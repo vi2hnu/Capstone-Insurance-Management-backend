@@ -1,0 +1,220 @@
+services:
+  configserver:
+    build: ./Config-Server
+    container_name: configserver
+    ports:
+      - "8888:8888"
+    networks:
+      - dockerNet
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  eureka:
+    build: ./Service-Registry
+    container_name: eureka
+    ports:
+      - "8761:8761"
+    networks:
+      - dockerNet
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    depends_on:
+      configserver:
+        condition: service_healthy
+
+  kafkaQueue:
+    image: apache/kafka:4.1.1
+    container_name: kafkaQueue
+    hostname: kafkaQueue
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafkaQueue:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafkaQueue:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+    depends_on:
+      configserver:
+        condition: service_healthy
+    networks:
+      - dockerNet
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    depends_on:
+      - kafkaQueue
+    networks:
+      - dockerNet
+
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: Vishnu1606
+    volumes:
+      - SHIMS_Mongo:/data/db
+    depends_on:
+      - redis
+    networks:
+      - dockerNet
+    
+  sqldb:
+    image: mysql:oraclelinux9
+    container_name: sqldb
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: Vishnu1606
+    volumes:
+      - SHIMS_Sql:/var/lib/mysql
+    depends_on:
+      - redis
+    networks:
+      - dockerNet
+
+  identityservice:
+    build: ./Identity-Service
+    container_name: identityservice
+    ports:
+      - "8080:8080"
+    depends_on:
+      mongo:
+        condition: service_started
+      kafkaQueue:
+        condition: service_started
+      eureka:
+        condition: service_healthy
+      configserver:
+        condition: service_healthy
+    networks:
+      - dockerNet
+
+  policyservice:
+    build: ./Policy-Service
+    container_name: policyservice
+    ports:
+      - "8081:8081"
+    depends_on:
+      sqldb:
+        condition: service_started
+      kafkaQueue:
+        condition: service_started
+      eureka:
+        condition: service_healthy
+      configserver:
+        condition: service_healthy
+    networks:
+      - dockerNet
+
+  providerservice:
+    build: ./Provider-Service
+    container_name: providerservice
+    ports:
+      - "8082:8082"
+    depends_on:
+      sqldb:
+        condition: service_started
+      kafkaQueue:
+        condition: service_started
+      eureka:
+        condition: service_healthy
+      configserver:
+        condition: service_healthy
+    networks:
+      - dockerNet
+
+  claimsservice:
+    build: ./Claims-Service
+    container_name: claimsservice
+    ports:
+      - "8083:8083"
+    depends_on:
+      sqldb:
+        condition: service_started
+      configserver:
+        condition: service_healthy
+      eureka:
+        condition: service_healthy
+    networks:
+      - dockerNet
+
+  billingservice:
+    build: ./Billing-Service
+    container_name: billingservice
+    ports:
+      - "8084:8084"
+    depends_on:
+      mongo:
+        condition: service_started
+      configserver:
+        condition: service_healthy
+      eureka:
+        condition: service_healthy
+    networks:
+      - dockerNet
+
+  emailservice:
+    build: ./Email-Service
+    container_name: emailservice
+    ports:
+      - "8085:8085"
+    depends_on:
+      kafkaQueue:
+        condition: service_started
+      configserver:
+        condition: service_healthy
+      eureka:
+        condition: service_healthy
+    networks:
+      - dockerNet
+  apigateway:
+    build: ./Api-Gateway
+    container_name: apigateway
+    ports:
+      - "9000:9000"
+    depends_on:
+      identityservice:
+        condition: service_started
+      providerservice:
+        condition: service_started
+      policyservice:
+        condition: service_started
+      claimsservice:
+        condition: service_started
+      billingservice:
+        condition: service_started 
+      configserver:
+        condition: service_healthy
+      eureka:
+        condition: service_healthy
+    networks:
+      - dockerNet
+
+volumes:
+  SHIMS_Sql:
+    external: true
+  SHIMS_Mongo:
+    external: true
+
+networks:
+  dockerNet:
+    driver: bridge
