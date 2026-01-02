@@ -1,6 +1,7 @@
 package org.example.identityservice.controller;
 
 import org.example.identityservice.dto.ChangePasswordDTO;
+import org.example.identityservice.dto.ForgotPasswordDTO;
 import org.example.identityservice.dto.LoginDTO;
 import org.example.identityservice.dto.MessageResponse;
 import org.example.identityservice.dto.SignupDTO;
@@ -64,7 +65,7 @@ public class AuthController {
     }
 
     @PostMapping("/forgot/password")
-    public ResponseEntity<Users> forgotPassword(@RequestBody LoginDTO request){
+    public ResponseEntity<Users> forgotPassword(@RequestBody ForgotPasswordDTO request){
         return ResponseEntity.ok(authService.forgotPassword(request));
     }
 

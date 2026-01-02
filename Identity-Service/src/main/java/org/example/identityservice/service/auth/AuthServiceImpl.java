@@ -6,12 +6,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.example.identityservice.dto.ChangePasswordDTO;
+import org.example.identityservice.dto.ForgotPasswordDTO;
 import org.example.identityservice.dto.LoginDTO;
 import org.example.identityservice.dto.LoginRessultDTO;
 import org.example.identityservice.dto.SignupDTO;
+import org.example.identityservice.dto.UserDTO;
+import org.example.identityservice.exception.UserAlreadyExistsException;
 import org.example.identityservice.model.entity.Users;
 import org.example.identityservice.model.enums.Role;
-import org.example.identityservice.exception.UserAlreadyExistsException;
 import org.example.identityservice.repository.UsersRepository;
 import org.example.identityservice.service.jwt.JwtUtils;
 import org.example.identityservice.service.user.UserDetailsImpl;
@@ -21,6 +23,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -62,8 +65,9 @@ public class AuthServiceImpl implements AuthService {
         if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) < 90) {
             changePassword = false;
         }
-        
-        return new LoginRessultDTO(jwtToken, changePassword);
+        UserDTO userDTO = new UserDTO(userDetails.getId(),userDetails.getUsername(),null, userDetails.getEmail(),
+                null,userDetails.getRole(),null);
+        return new LoginRessultDTO(jwtToken, changePassword, userDTO);
     }
 
     @Override
@@ -98,8 +102,8 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public Users forgotPassword(LoginDTO dto){
-        Users user = userRepository.findUsersByUsername(dto.username());
+    public Users forgotPassword(ForgotPasswordDTO dto){
+        Users user = userRepository.findUsersByEmail(dto.email());
         user.setPassword(encoder.encode(dto.password()));
         return userRepository.save(user);
     }
