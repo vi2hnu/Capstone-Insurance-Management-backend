@@ -7,7 +7,6 @@ import org.example.claimsservice.dto.ClaimsOfficerValidationDTO;
 import org.example.claimsservice.dto.PolicyDTO;
 import org.example.claimsservice.dto.ProviderVerificationDTO;
 import org.example.claimsservice.dto.UserDTO;
-import org.example.claimsservice.exception.ClaimAlreadySubmittedException;
 import org.example.claimsservice.exception.ClaimNotFoundException;
 import org.example.claimsservice.exception.InvalidPolicyClaimException;
 import org.example.claimsservice.exception.InvalidStageException;
@@ -177,5 +176,11 @@ public class ClaimServiceImpl implements ClaimService{
         return claimRepository.save(claim);
     }
 
+    @Override
+    public Claim providerAddClaim(AddClaimsDTO request) {
+        Claim result =  addClaim(request);
+        result.setStage(ClaimStage.CLAIMS_OFFICER);
+        return claimRepository.save(result);
+    }
 
 }
