@@ -83,10 +83,6 @@ public class ClaimServiceImpl implements ClaimService{
             throw new InvalidPolicyClaimException("Invalid policy claim");
         }
 
-        if(claimRepository.existsByUserIdAndPolicyId(request.userId(),request.policyId())){
-            throw new ClaimAlreadySubmittedException("Claim already submitted");
-        }
-
         Claim claim = new Claim(request.policyId(), request.userId(), 
         request.hospitalId(), request.requestedAmount(), request.supportingDocument());
         claimRepository.save(claim);
