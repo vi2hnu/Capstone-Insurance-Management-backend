@@ -11,6 +11,7 @@ import org.example.identityservice.dto.LoginRessultDTO;
 import org.example.identityservice.dto.SignupDTO;
 import org.example.identityservice.model.entity.Users;
 import org.example.identityservice.model.enums.Role;
+import org.example.identityservice.exception.UserAlreadyExistsException;
 import org.example.identityservice.repository.UsersRepository;
 import org.example.identityservice.service.jwt.JwtUtils;
 import org.example.identityservice.service.user.UserDetailsImpl;
@@ -20,7 +21,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -71,7 +71,7 @@ public class AuthServiceImpl implements AuthService {
         log.info("in service");
         if (userRepository.existsByUsername(signUpRequest.username()) || userRepository.existsByEmail(signUpRequest.email())) {
             log.info("user exists");
-            return false;
+            throw new UserAlreadyExistsException("Username or Email already exists");
         }
 
         // Create new user's account

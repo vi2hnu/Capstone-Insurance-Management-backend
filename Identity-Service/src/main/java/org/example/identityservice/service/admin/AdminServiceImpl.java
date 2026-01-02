@@ -9,6 +9,7 @@ import java.util.Random;
 
 import org.example.identityservice.dto.CreateUserDTO;
 import org.example.identityservice.dto.UserDTO;
+import org.example.identityservice.exception.UserAlreadyExistsException;
 import org.example.identityservice.model.entity.Users;
 import org.example.identityservice.repository.UsersRepository;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -58,11 +59,11 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public Users createUser(CreateUserDTO dto) {
         if (usersRepository.existsByEmail(dto.email())) {
-            throw new IllegalArgumentException("Email already exists");
+            throw new UserAlreadyExistsException("Email already exists");
         }
 
         if (usersRepository.existsByUsername(dto.username())) {
-            throw new IllegalArgumentException("Username already exists");
+            throw new UserAlreadyExistsException("Username already exists");
         }
         String password = getRandomString();
         Users user = new Users(dto.name(), dto.username(),
