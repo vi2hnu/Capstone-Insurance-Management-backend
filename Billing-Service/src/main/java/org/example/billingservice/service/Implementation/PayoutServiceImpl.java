@@ -40,24 +40,24 @@ public class PayoutServiceImpl implements PayoutService {
     @Override
     public void payout(PayoutDTO request){
         PolicyPlanDTO planId = policyService.getPolicy(request.policyId());
-        ProviderType providerType = providerService.getProviderType(planId.plan().id(), request.providerId());
+        ProviderType providerType = providerService.getProviderType(planId.plan().id(), request.hospitalId());
         if(providerType==ProviderType.IN_NETWORK){
             payHospital(request);
         }
         else{
             payUser(request);
         }
-        claimService.markAsPaid(request.claimId());
-        policyService.changeClaimedAmount(new CoverageChangeDTO(request.policyId(),request.amount()));
+        claimService.markAsPaid(request.id());
+        policyService.changeClaimedAmount(new CoverageChangeDTO(request.policyId(),request.requestedAmount()));
 
     }
 
     private void payHospital(PayoutDTO request){
-        providerPayoutRepository.save(new ProviderPayout(request.providerId(), request.claimId(), request.amount()));
+        providerPayoutRepository.save(new ProviderPayout(request.hospitalId(), request.id(), request.requestedAmount()));
     }
 
     private void payUser(PayoutDTO request){
-        UserPayout payout =new UserPayout(request.userId(), request.claimId(), request.amount());
+        UserPayout payout =new UserPayout(request.userId(), request.id(), request.requestedAmount());
         userPayoutRepository.save(payout);
         kafkaTemplate.send("payout-email",payout);
     }

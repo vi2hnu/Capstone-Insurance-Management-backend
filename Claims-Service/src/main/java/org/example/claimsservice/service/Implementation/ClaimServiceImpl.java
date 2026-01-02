@@ -2,11 +2,18 @@ package org.example.claimsservice.service.Implementation;
 
 import java.util.List;
 
-import feign.FeignException;
-import lombok.extern.slf4j.Slf4j;
-
-import org.example.claimsservice.dto.*;
-import org.example.claimsservice.exception.*;
+import org.example.claimsservice.dto.AddClaimsDTO;
+import org.example.claimsservice.dto.ClaimsOfficerValidationDTO;
+import org.example.claimsservice.dto.PolicyDTO;
+import org.example.claimsservice.dto.ProviderVerificationDTO;
+import org.example.claimsservice.dto.UserDTO;
+import org.example.claimsservice.exception.ClaimAlreadySubmittedException;
+import org.example.claimsservice.exception.ClaimNotFoundException;
+import org.example.claimsservice.exception.InvalidPolicyClaimException;
+import org.example.claimsservice.exception.InvalidStageException;
+import org.example.claimsservice.exception.NoBankDetailsFoundException;
+import org.example.claimsservice.exception.PolicyNotFoundException;
+import org.example.claimsservice.exception.UnauthorizedClaimReviewException;
 import org.example.claimsservice.feign.IdentityService;
 import org.example.claimsservice.feign.PolicyService;
 import org.example.claimsservice.feign.ProviderService;
@@ -21,6 +28,9 @@ import org.example.claimsservice.repository.ClaimReviewRepository;
 import org.example.claimsservice.service.ClaimService;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+
+import feign.FeignException;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -145,17 +155,20 @@ public class ClaimServiceImpl implements ClaimService{
         if(!request.status().equals(ReviewStatus.APPROVED)) {
             claim.setStatus(ClaimStatus.REJECTED);
             claim.setStage(ClaimStage.COMPLETED);
-            return claimRepository.save(claim);
+            Claim savedClaim = claimRepository.save(claim);
+            kafkaTemplate.send("claim-decision-email",savedClaim);
+            return savedClaim;
         }
         claim.setStage(ClaimStage.PAYMENT);
 
         //using kafka call the payment service
 
-        claimRepository.save(claim);
+        Claim savedClaim = claimRepository.save(claim);
         
-        kafkaTemplate.send("claim-decision-email",claim);
+        kafkaTemplate.send("claim-decision-email",savedClaim);
+        kafkaTemplate.send("claim-payout",savedClaim);
 
-        return claim;
+        return savedClaim;
     }
 
     @Override

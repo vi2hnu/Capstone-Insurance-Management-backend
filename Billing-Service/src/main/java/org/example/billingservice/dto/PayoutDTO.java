@@ -6,16 +6,16 @@ import jakarta.validation.constraints.NotNull;
 public record PayoutDTO(
 
         @NotNull
-        Long claimId,
+        Long id,
 
         @NotBlank
         String userId,
 
         @NotNull
-        Long providerId,
+        Long hospitalId,
 
         @NotNull
-        Double amount,
+        Double requestedAmount,
 
         @NotNull
         Long policyId
