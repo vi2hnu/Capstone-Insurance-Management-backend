@@ -14,4 +14,5 @@ public interface PolicyUserRepository extends JpaRepository<Policy,Long> {
     List<Policy> findByUserId(String userId);
     List<Policy> findByAgentId(String agentId);
     List<Policy> findByEndDateAndStatus(LocalDate endDate,Status status);
+    Policy findByUserIdAndPlan(String userId, Plan plan);
 }

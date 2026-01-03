@@ -21,4 +21,5 @@ public interface HospitalService {
     Boolean checkHospitalPlan(Long planId,Long hospitalId);
     Boolean checkAssociation(String userId, Long hospitalId);
     NetworkType getProviderType(Long planId, Long hospitalId);
+    List<Hospital> getAll();
 }

@@ -183,4 +183,8 @@ public class ClaimServiceImpl implements ClaimService{
         return claimRepository.save(result);
     }
 
+    @Override
+    public List<Claim> getClaimsForOfficer() {
+        return claimRepository.findByStage(ClaimStage.CLAIMS_OFFICER);
+    }
 }

@@ -54,5 +54,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> hospitalBankNotFound(HospitalBankNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(HospitalAlreadyExistsException.class)
+    public ResponseEntity<String> hospitalAlreadyExists(HospitalAlreadyExistsException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
 }
 

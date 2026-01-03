@@ -52,4 +52,9 @@ public class PolicyController {
     public ResponseEntity<Policy> getPolicy(@PathVariable Long policyId){
         return ResponseEntity.status(HttpStatus.OK).body(policyService.getPolicyById(policyId));
     }
+
+    @GetMapping("/check/enrollment/{userId}/{planId}")
+    public ResponseEntity<Policy> getPolicy(@PathVariable String userId, @PathVariable Long planId){
+        return ResponseEntity.status(HttpStatus.OK).body(policyService.getEnrollment(userId, planId));
+    } 
 }

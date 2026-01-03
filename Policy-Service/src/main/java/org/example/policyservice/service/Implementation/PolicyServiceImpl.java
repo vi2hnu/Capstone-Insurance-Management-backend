@@ -47,9 +47,16 @@ public class PolicyServiceImpl implements PolicyService {
         //after feign connection check if user exists
 
         Plan plan = planRepository.findPlanById(request.planId());
-        if(policyRepository.existsPolicyUserByUserIdAndPlan(request.userId(),plan)){
-            log.error("User Already enrolled in plan");
-            throw new UserAlreadyEnrolledException("User Already enrolled in plan");
+        if(plan.getStatus()==Status.SUSPENDED){
+            throw new PlanNotFoundException("Plan has been suspended");
+        }
+
+        Policy existingPolicy = policyRepository.findByUserIdAndPlan(request.userId(), plan);
+        if(existingPolicy!=null){
+            if(existingPolicy.getStatus()==Status.ACTIVE){
+                throw new UserAlreadyEnrolledException("User already enrolled in plan");
+            }
+            policyRepository.delete(existingPolicy);
         }
 
         Policy policy = new Policy(plan,request.userId(),LocalDate.now(),
@@ -91,7 +98,7 @@ public class PolicyServiceImpl implements PolicyService {
             throw new UserNotEnrolledException("User does not match user");
         }
 
-        if(policy.getStatus()==Status.CANCELLED){
+        if(policy.getStatus()==Status.CANCELLED || policy.getStatus()==Status.EXPIRED){
             log.info("user not enrolled in policy");
             throw new UserNotEnrolledException("User not enrolled in policy");
         }
@@ -148,6 +155,13 @@ public class PolicyServiceImpl implements PolicyService {
             kafkaTemplate.send("policy-renewal-reminder",policy);
         });
 
+    }
+
+    @Override
+    public Policy getEnrollment(String userId, Long policyId) {
+        Plan plan = planRepository.findPlanById(policyId);
+        Policy policy = policyRepository.findByUserIdAndPlan(userId, plan);
+        return policy;
     }
 
 }

@@ -6,6 +6,7 @@ import org.example.providerservice.dto.AddHospitalDTO;
 import org.example.providerservice.dto.BankDetailsDTO;
 import org.example.providerservice.dto.HospitalAuthorityDTO;
 import org.example.providerservice.dto.RegisterPlanDTO;
+import org.example.providerservice.exception.HospitalAlreadyExistsException;
 import org.example.providerservice.exception.HospitalBankNotFoundException;
 import org.example.providerservice.exception.HospitalNotFoundException;
 import org.example.providerservice.exception.PlanAlreadyRegisteredException;
@@ -40,6 +41,9 @@ public class HospitalServiceImpl implements HospitalService {
 
     @Override
     public Hospital addHospital(AddHospitalDTO request) {
+        if(hospitalRepository.existsByhospitalName(request.hospitalName())){
+            throw new HospitalAlreadyExistsException("Hospital with name already exists");
+        }
         Hospital hospital = new Hospital(request.hospitalName(),request.cityName(),
                 request.phoneNumber(),request.email());
         return hospitalRepository.save(hospital);
@@ -118,4 +122,8 @@ public class HospitalServiceImpl implements HospitalService {
         return hospitalPlan.getNetworkType();
     }
 
+    @Override
+    public List<Hospital> getAll(){
+        return hospitalRepository.findAll();
+    }
 }

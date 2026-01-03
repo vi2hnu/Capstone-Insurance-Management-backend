@@ -16,4 +16,5 @@ public interface ClaimService {
     Claim claimsOfficerValidation(ClaimsOfficerValidationDTO request);
     Claim changeStatus(Long claimId);
     Claim providerAddClaim(AddClaimsDTO request);
+    List<Claim> getClaimsForOfficer();
 }

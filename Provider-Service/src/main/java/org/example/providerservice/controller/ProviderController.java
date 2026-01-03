@@ -54,5 +54,4 @@ public class ProviderController {
     public ResponseEntity<NetworkType>  getProviderType(@PathVariable Long planId, @PathVariable Long hospitalId) {
         return ResponseEntity.status(HttpStatus.OK).body(hospitalService.getProviderType(planId, hospitalId));
     }
-
 }
