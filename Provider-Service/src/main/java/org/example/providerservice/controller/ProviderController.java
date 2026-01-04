@@ -1,18 +1,24 @@
 package org.example.providerservice.controller;
 
+import java.util.List;
+
 import org.example.providerservice.dto.BankDetailsDTO;
 import org.example.providerservice.dto.RegisterPlanDTO;
+import org.example.providerservice.model.entity.Hospital;
 import org.example.providerservice.model.entity.HospitalBank;
 import org.example.providerservice.model.entity.HospitalPlan;
 import org.example.providerservice.model.enums.NetworkType;
 import org.example.providerservice.service.HospitalService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
-
-import java.util.List;
 
 
 @RestController
@@ -40,6 +46,11 @@ public class ProviderController {
         return ResponseEntity.status(HttpStatus.OK).body(hospitalService.getAllHospitalsByPlan(planId));
     }
 
+    @GetMapping("/get/associated/hospital/{userId}")
+    public ResponseEntity<Hospital> getAssociatedHospital(@PathVariable String userId) {
+        return ResponseEntity.status(HttpStatus.OK).body(hospitalService.getAssociatedHospital(userId));
+    }
+    
     @GetMapping("/check/plan/{planId}/{hospitalId}")
     public ResponseEntity<Boolean> checkPlan(@PathVariable Long planId, @PathVariable Long hospitalId) {
         return ResponseEntity.status(HttpStatus.OK).body(hospitalService.checkHospitalPlan(planId, hospitalId));

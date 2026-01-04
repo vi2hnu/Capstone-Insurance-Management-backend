@@ -1,21 +1,23 @@
 package org.example.policyservice.service.Implementation;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+
 import org.example.policyservice.dto.PlanDTO;
 import org.example.policyservice.exception.PlanAlreadyExistsException;
+import org.example.policyservice.exception.PlanNotFoundException;
 import org.example.policyservice.model.entity.Plan;
 import org.example.policyservice.model.enums.Status;
 import org.example.policyservice.repository.PlanRepository;
 import org.example.policyservice.service.PlanService;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
 public class PlanServiceImpl implements PlanService {
 
-    private PlanRepository planRepository;
+    private final PlanRepository planRepository;
 
     public PlanServiceImpl(PlanRepository planRepository){
         this.planRepository = planRepository;
@@ -38,6 +40,13 @@ public class PlanServiceImpl implements PlanService {
         return planRepository.save(plan);
     }
 
-
+    @Override
+    public Plan getPlan(Long id){
+        Plan plan = planRepository.findPlanById(id);
+        if(plan==null){
+            throw new PlanNotFoundException("Plan doesnt exist");
+        }
+        return plan;
+    }
 
 }

@@ -59,5 +59,15 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> hospitalAlreadyExists(HospitalAlreadyExistsException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(UserAlreadyRegisteredException.class)
+    public ResponseEntity<String> userAlreadyRegistered(UserAlreadyRegisteredException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(PlanNotFoundException.class)
+    public ResponseEntity<String> planNotFoundException(PlanNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
 }
 

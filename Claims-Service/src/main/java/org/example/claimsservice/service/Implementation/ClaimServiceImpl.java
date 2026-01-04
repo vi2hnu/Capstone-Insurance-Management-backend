@@ -20,6 +20,7 @@ import org.example.claimsservice.model.entity.Claim;
 import org.example.claimsservice.model.entity.ClaimReview;
 import org.example.claimsservice.model.enums.ClaimStage;
 import org.example.claimsservice.model.enums.ClaimStatus;
+import org.example.claimsservice.model.enums.ClaimSubmissionEntity;
 import org.example.claimsservice.model.enums.ReviewStatus;
 import org.example.claimsservice.model.enums.ReviewerRole;
 import org.example.claimsservice.repository.ClaimRepository;
@@ -180,6 +181,7 @@ public class ClaimServiceImpl implements ClaimService{
     public Claim providerAddClaim(AddClaimsDTO request) {
         Claim result =  addClaim(request);
         result.setStage(ClaimStage.CLAIMS_OFFICER);
+        result.setSubmittedBy(ClaimSubmissionEntity.PROVIDER);
         return claimRepository.save(result);
     }
 
@@ -187,4 +189,11 @@ public class ClaimServiceImpl implements ClaimService{
     public List<Claim> getClaimsForOfficer() {
         return claimRepository.findByStage(ClaimStage.CLAIMS_OFFICER);
     }
+
+    @Override
+    public List<Claim> getSubmittedClaimsOfProvider(Long providerId){
+        return claimRepository.findByHospitalIdAndSubmittedBy(providerId,ClaimSubmissionEntity.PROVIDER);
+    }
+
+    
 }

@@ -2,10 +2,19 @@ package org.example.claimsservice.model.entity;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.*;
 import org.example.claimsservice.model.enums.ClaimStage;
 import org.example.claimsservice.model.enums.ClaimStatus;
+import org.example.claimsservice.model.enums.ClaimSubmissionEntity;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import lombok.Data;
 
 @Entity
@@ -35,6 +44,9 @@ public class Claim {
     @Enumerated(EnumType.STRING)
     ClaimStage stage;
 
+    @Enumerated(EnumType.STRING)
+    ClaimSubmissionEntity submittedBy;
+
     public Claim(Long policyId, String userId, Long hospitalId,Double requestedAmount, String supportingDocument){
         this.policyId = policyId;
         this.userId = userId;
@@ -44,6 +56,7 @@ public class Claim {
         this.claimRequestDate = LocalDateTime.now();
         this.status = ClaimStatus.SUBMITTED;
         this.stage  = ClaimStage.PROVIDER;
+        this.submittedBy = ClaimSubmissionEntity.USER;
     }
 
     public Claim(){

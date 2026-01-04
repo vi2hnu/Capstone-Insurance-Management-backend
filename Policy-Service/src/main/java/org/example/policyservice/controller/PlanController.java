@@ -1,12 +1,16 @@
 package org.example.policyservice.controller;
 
+import java.util.List;
+
 import org.example.policyservice.model.entity.Plan;
 import org.example.policyservice.service.PlanService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/plan")
@@ -23,5 +27,10 @@ public class PlanController {
         return ResponseEntity.status(HttpStatus.OK).body(planService.getAllPlans());
     }
 
+    @GetMapping("/get/{id}")
+    public ResponseEntity<Plan> getaPlan(@PathVariable Long id){
+        return ResponseEntity.status(HttpStatus.OK).body(planService.getPlan(id));
+    }
+    
 
 }

@@ -41,4 +41,9 @@ public class ProviderClaimsController {
     public ResponseEntity<Claim> addClaim(@RequestBody @Valid AddClaimsDTO request) {
         return ResponseEntity.status(HttpStatus.OK).body(claimService.providerAddClaim(request));
     }
+
+    @GetMapping("/get/submitted/claims/{providerId}")
+    public ResponseEntity<List<Claim>> getSubmittedClaim(@PathVariable Long providerId) {
+        return ResponseEntity.status(HttpStatus.OK).body(claimService.getSubmittedClaimsOfProvider(providerId));
+    }
 }

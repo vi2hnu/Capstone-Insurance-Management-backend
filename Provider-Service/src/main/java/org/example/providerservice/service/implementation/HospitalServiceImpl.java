@@ -10,6 +10,8 @@ import org.example.providerservice.exception.HospitalAlreadyExistsException;
 import org.example.providerservice.exception.HospitalBankNotFoundException;
 import org.example.providerservice.exception.HospitalNotFoundException;
 import org.example.providerservice.exception.PlanAlreadyRegisteredException;
+import org.example.providerservice.exception.PlanNotFoundException;
+import org.example.providerservice.exception.UserAlreadyRegisteredException;
 import org.example.providerservice.model.entity.Hospital;
 import org.example.providerservice.model.entity.HospitalAuthority;
 import org.example.providerservice.model.entity.HospitalBank;
@@ -41,8 +43,8 @@ public class HospitalServiceImpl implements HospitalService {
 
     @Override
     public Hospital addHospital(AddHospitalDTO request) {
-        if(hospitalRepository.existsByhospitalName(request.hospitalName())){
-            throw new HospitalAlreadyExistsException("Hospital with name already exists");
+        if(hospitalRepository.existsByhospitalNameAndCityName(request.hospitalName(),request.cityName())){
+            throw new HospitalAlreadyExistsException("Hospital already exists");
         }
         Hospital hospital = new Hospital(request.hospitalName(),request.cityName(),
                 request.phoneNumber(),request.email());
@@ -53,6 +55,11 @@ public class HospitalServiceImpl implements HospitalService {
     public HospitalAuthority mapUserToHospital(HospitalAuthorityDTO hospitalAuthorityDTO) {
         Hospital hospital = hospitalRepository.findById(hospitalAuthorityDTO.hospitalId())
                 .orElseThrow(() -> new HospitalNotFoundException("Hospital not found"));
+
+        if(hospitalAuthorityRepository.existsByUserId(hospitalAuthorityDTO.userId())){
+            throw new UserAlreadyRegisteredException("User already registered under hospital");
+        }
+
         HospitalAuthority hospitalAuthority = new HospitalAuthority(hospital, hospitalAuthorityDTO.userId());
         return hospitalAuthorityRepository.save(hospitalAuthority);
     }
@@ -119,11 +126,19 @@ public class HospitalServiceImpl implements HospitalService {
         Hospital hospital = hospitalRepository.findById(hospitalId)
                 .orElseThrow(() -> new HospitalNotFoundException("Hospital not found"));
         HospitalPlan hospitalPlan =  hospitalPlanRepository.findByHospitalAndPlanId(hospital, planId);
+        if(hospitalPlan== null){
+            throw new PlanNotFoundException("Hospital is not registered under this plan");
+        }
         return hospitalPlan.getNetworkType();
     }
 
     @Override
     public List<Hospital> getAll(){
         return hospitalRepository.findAll();
+    }
+
+    @Override
+    public Hospital getAssociatedHospital(String userId){
+        return hospitalAuthorityRepository.findByUserId(userId).getHospital();
     }
 }

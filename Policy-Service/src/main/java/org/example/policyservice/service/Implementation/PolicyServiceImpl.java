@@ -1,11 +1,14 @@
 package org.example.policyservice.service.Implementation;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import org.example.policyservice.dto.CoverageChangeDTO;
+import org.example.policyservice.dto.PlanCountDTO;
 import org.example.policyservice.dto.PolicyEnrollDTO;
+import org.example.policyservice.dto.PolicyStatusCountDTO;
 import org.example.policyservice.dto.PolicyUserDTO;
 import org.example.policyservice.exception.PlanNotFoundException;
 import org.example.policyservice.exception.PolicyNotEnrolledByAgentException;
@@ -164,4 +167,34 @@ public class PolicyServiceImpl implements PolicyService {
         return policy;
     }
 
+    @Override
+    public List<PlanCountDTO> getMostPurchasedPlansLastMonth() {
+        LocalDate today = LocalDate.now();
+        LocalDate oneMonthAgo = today.minusMonths(1);
+
+        List<Object[]> results = policyRepository.findPlanCounts(oneMonthAgo, today);
+        List<PlanCountDTO> reportList = new ArrayList<>();
+
+        results.stream().forEach(row->{
+            Plan plan = (Plan) row[0];
+            Long count = (Long) row[1];
+            reportList.add(new PlanCountDTO(plan.getName(), count.intValue()));
+        });
+
+        return reportList;
+    }
+
+    @Override
+    public List<PolicyStatusCountDTO> getPolicyCountByStatus() {
+        List<Object[]> results = policyRepository.countPoliciesByStatus();
+        List<PolicyStatusCountDTO> response = new ArrayList<>();
+
+        results.stream().forEach(row->{
+            Status status = (Status) row[0];
+            Long count = (Long) row[1];
+            response.add(new PolicyStatusCountDTO(status, count));
+        });
+
+        return response;
+    }
 }
