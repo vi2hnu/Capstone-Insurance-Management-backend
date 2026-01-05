@@ -5,6 +5,7 @@ import java.util.List;
 import org.example.claimsservice.dto.ClaimStatusCountDTO;
 import org.example.claimsservice.model.entity.Claim;
 import org.example.claimsservice.service.AnalyticService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,10 +13,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.data.domain.Page;
 
 @RestController
-@RequestMapping("/api/analytics")
+@RequestMapping("/api/admin")
 public class AnalyticController {
 
     private final AnalyticService analyticService;
@@ -24,7 +24,7 @@ public class AnalyticController {
         this.analyticService = analyticService;
     }
 
-    @GetMapping("/admin/get/claims/by-status")
+    @GetMapping("/get/claims/by-status")
     public ResponseEntity<List<ClaimStatusCountDTO>> getMethodName() {
         return ResponseEntity.status(HttpStatus.OK).body(analyticService.getClaimCountByStatus());
     }
@@ -36,8 +36,8 @@ public class AnalyticController {
     }
 
     @GetMapping("/claims/high-value/last-month")
-    public Page<Claim> getHighValueClaimsLastMonth(@RequestParam(defaultValue = "0") int page,@RequestParam(defaultValue = "10") int size) {
-        return analyticService.getTopHighValueClaimsLastMonth(page, size);
+    public List<Claim> getHighValueClaimsLastMonth() {
+        return analyticService.getTopHighValueClaimsLastMonth();
     }
 
 }

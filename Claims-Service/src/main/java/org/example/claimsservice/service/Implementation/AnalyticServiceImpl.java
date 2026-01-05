@@ -1,6 +1,7 @@
 package org.example.claimsservice.service.Implementation;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.example.claimsservice.dto.ClaimStatusCountDTO;
@@ -35,13 +36,9 @@ public class AnalyticServiceImpl implements AnalyticService {
     }
 
     @Override
-    public Page<Claim> getTopHighValueClaimsLastMonth(int page, int size) {
-        LocalDate today = LocalDate.now();
-        LocalDate oneMonthAgo = today.minusMonths(1).withDayOfMonth(1);
-        LocalDate endOfLastMonth = oneMonthAgo.withDayOfMonth(oneMonthAgo.lengthOfMonth());
-
-        return claimRepository.findByClaimRequestDateBetweenOrderByRequestedAmountDesc(oneMonthAgo, endOfLastMonth,
-                PageRequest.of(page, size));
+    public List<Claim> getTopHighValueClaimsLastMonth() {
+        LocalDateTime fromDate = LocalDateTime.now().minusMonths(1);
+        PageRequest top10 = PageRequest.of(0, 10);
+        return claimRepository.findTopHighValueClaimsLastMonth(fromDate, top10);
     }
-
 }

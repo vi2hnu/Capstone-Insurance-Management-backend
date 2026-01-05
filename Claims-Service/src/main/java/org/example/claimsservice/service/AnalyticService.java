@@ -9,5 +9,5 @@ import org.springframework.data.domain.Page;
 public interface AnalyticService{
     List<ClaimStatusCountDTO> getClaimCountByStatus();
     Page<Claim> getClaimsByHospital(Long hospitalId, int page, int size);
-    Page<Claim> getTopHighValueClaimsLastMonth(int page, int size);
+    List<Claim> getTopHighValueClaimsLastMonth();
 }
