@@ -6,11 +6,9 @@ import org.example.claimsservice.dto.AddClaimsDTO;
 import org.example.claimsservice.dto.ClaimsOfficerValidationDTO;
 import org.example.claimsservice.dto.PolicyDTO;
 import org.example.claimsservice.dto.ProviderVerificationDTO;
-import org.example.claimsservice.dto.UserDTO;
 import org.example.claimsservice.exception.ClaimNotFoundException;
 import org.example.claimsservice.exception.InvalidPolicyClaimException;
 import org.example.claimsservice.exception.InvalidStageException;
-import org.example.claimsservice.exception.NoBankDetailsFoundException;
 import org.example.claimsservice.exception.PolicyNotFoundException;
 import org.example.claimsservice.exception.UnauthorizedClaimReviewException;
 import org.example.claimsservice.feign.IdentityService;
@@ -40,7 +38,6 @@ public class ClaimServiceImpl implements ClaimService{
     private final PolicyService policyService;
     private final ProviderService providerService;
     private final ClaimReviewRepository claimReviewRepository;
-    private final IdentityService identityService;
     private final KafkaTemplate<String, Claim> kafkaTemplate;
     
     public ClaimServiceImpl(ClaimRepository claimRepository, PolicyService policyService,
@@ -50,17 +47,11 @@ public class ClaimServiceImpl implements ClaimService{
         this.policyService = policyService;
         this.providerService = providerService;
         this.claimReviewRepository = claimReviewRepository;
-        this.identityService = identityService;
         this.kafkaTemplate = kafkaTemplate;
     }
     
     @Override
     public Claim addClaim(AddClaimsDTO request) {
-        UserDTO user = identityService.getUser(request.userId());
-        if(user.bankAccount()==null){
-            throw new NoBankDetailsFoundException("No bank account found");
-        }
-
         PolicyDTO policy;
         try {
             policy = policyService.getPolicyById(request.policyId());
