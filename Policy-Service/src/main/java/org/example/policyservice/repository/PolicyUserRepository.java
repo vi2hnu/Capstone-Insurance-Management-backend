@@ -12,12 +12,13 @@ import org.springframework.data.repository.query.Param;
 
 
 public interface PolicyUserRepository extends JpaRepository<Policy,Long> {
-    boolean existsPolicyUserByUserIdAndPlan(String userId, Plan plan);
+    boolean existsPolicyUserByUserIdAndPlanAndStatus(String userId, Plan plan,Status status);
     List<Policy> findByUserId(String userId);
     List<Policy> findByAgentId(String agentId);
     List<Policy> findByEndDateAndStatus(LocalDate endDate,Status status);
-    Policy findByUserIdAndPlan(String userId, Plan plan);
+    Policy findByUserIdAndPlanAndStatus(String userId, Plan plan, Status status);
 
+    List<Policy> findByEndDateBeforeAndStatus(LocalDate endDate, Status status);
     @Query("SELECT p.plan, COUNT(p.id) FROM Policy p " +
            "WHERE p.startDate >= :fromDate AND p.startDate <= :toDate " +
            "GROUP BY p.plan " +

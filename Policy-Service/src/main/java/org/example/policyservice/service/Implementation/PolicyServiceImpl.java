@@ -43,23 +43,16 @@ public class PolicyServiceImpl implements PolicyService {
 
     @Override
     public Policy enrollUser(PolicyEnrollDTO request) {
-        if(!planRepository.existsPlanById(request.planId())){
+        Plan plan = planRepository.findPlanById(request.planId());
+
+        if(plan==null){
             log.error("Plan does not exists for {}",request.planId());
             throw new PlanNotFoundException("Plan does not exists");
         }
-        //after feign connection check if user exists
 
-        Plan plan = planRepository.findPlanById(request.planId());
-        if(plan.getStatus()==Status.SUSPENDED){
-            throw new PlanNotFoundException("Plan has been suspended");
-        }
-
-        Policy existingPolicy = policyRepository.findByUserIdAndPlan(request.userId(), plan);
-        if(existingPolicy!=null){
-            if(existingPolicy.getStatus()==Status.ACTIVE){
-                throw new UserAlreadyEnrolledException("User already enrolled in plan");
-            }
-            policyRepository.delete(existingPolicy);
+        //check if user is already reigstered under the policy
+        if(policyRepository.existsPolicyUserByUserIdAndPlanAndStatus(request.userId(), plan, Status.ACTIVE)){
+            throw new UserAlreadyEnrolledException("User already enrolled in plan");
         }
 
         Policy policy = new Policy(plan,request.userId(),LocalDate.now(),
@@ -81,7 +74,7 @@ public class PolicyServiceImpl implements PolicyService {
             throw new UserNotEnrolledException("User does not match user");
         }
 
-        if(!Objects.equals(request.agentId(), policy.getAgentId())){
+        if(request.agentId()!=null && !Objects.equals(request.agentId(), policy.getAgentId())){
             log.error("Policy does not match agent id");
             throw new PolicyNotEnrolledByAgentException("Policy was not enrolled by agent");
         }
@@ -106,7 +99,7 @@ public class PolicyServiceImpl implements PolicyService {
             throw new UserNotEnrolledException("User not enrolled in policy");
         }
 
-        if(!Objects.equals(request.agentId(), policy.getAgentId())){
+        if(request.agentId()!=null && !Objects.equals(request.agentId(), policy.getAgentId())){
             log.error("Policy does not match agent id {}", policy.getAgentId());
             throw new PolicyNotEnrolledByAgentException("Policy was not enrolled by agent");
         }
@@ -160,11 +153,21 @@ public class PolicyServiceImpl implements PolicyService {
 
     }
 
+    @Scheduled(cron = "0 0 0 * * ?")
+    public void expirePolicies() {
+        List<Policy> expiredPolicies = policyRepository.findByEndDateBeforeAndStatus( LocalDate.now(), Status.ACTIVE);
+
+        expiredPolicies.forEach(policy -> {
+            policy.setStatus(Status.EXPIRED);
+            policyRepository.save(policy);
+        });
+    }
+
+
     @Override
     public Policy getEnrollment(String userId, Long policyId) {
         Plan plan = planRepository.findPlanById(policyId);
-        Policy policy = policyRepository.findByUserIdAndPlan(userId, plan);
-        return policy;
+        return  policyRepository.findByUserIdAndPlanAndStatus(userId, plan, Status.ACTIVE);
     }
 
     @Override
