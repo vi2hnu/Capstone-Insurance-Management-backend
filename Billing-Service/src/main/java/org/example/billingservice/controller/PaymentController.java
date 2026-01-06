@@ -1,7 +1,5 @@
 package org.example.billingservice.controller;
 
-import com.razorpay.RazorpayException;
-import jakarta.validation.Valid;
 import org.example.billingservice.dto.CreateOrderDTO;
 import org.example.billingservice.dto.PayoutDTO;
 import org.example.billingservice.dto.VerifyPaymentDTO;
@@ -10,10 +8,17 @@ import org.example.billingservice.service.PayoutService;
 import org.example.billingservice.service.PolicyPaymentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.razorpay.RazorpayException;
+
+import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/payment")
+@RequestMapping("/api/payment") //put in properties
 public class PaymentController {
 
     private final PolicyPaymentService paymentService;
