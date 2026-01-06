@@ -41,7 +41,7 @@ public class AdminController {
     }
 
     @GetMapping("/get/all")
-    public ResponseEntity<List<Hospital>> getAll() {
+    public ResponseEntity<List<Hospital>> getAllHospital() {
         return ResponseEntity.status(HttpStatus.OK).body(hospitalService.getAll());
     }
     
