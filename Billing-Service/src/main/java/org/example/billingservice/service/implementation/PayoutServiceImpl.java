@@ -1,7 +1,5 @@
-package org.example.billingservice.service.Implementation;
+package org.example.billingservice.service.implementation;
 
-import org.example.billingservice.Repository.ProviderPayoutRepository;
-import org.example.billingservice.Repository.UserPayoutRepository;
 import org.example.billingservice.dto.CoverageChangeDTO;
 import org.example.billingservice.dto.PayoutDTO;
 import org.example.billingservice.dto.PolicyPlanDTO;
@@ -11,10 +9,12 @@ import org.example.billingservice.feign.ProviderService;
 import org.example.billingservice.model.entity.ProviderPayout;
 import org.example.billingservice.model.entity.UserPayout;
 import org.example.billingservice.model.enums.ProviderType;
+import org.example.billingservice.repository.ProviderPayoutRepository;
+import org.example.billingservice.repository.UserPayoutRepository;
 import org.example.billingservice.service.PayoutService;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
-;
+
 
 @Service
 public class PayoutServiceImpl implements PayoutService {

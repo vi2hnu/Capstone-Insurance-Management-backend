@@ -39,5 +39,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> razorpayClientFailed(RazorPayClientException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_GATEWAY);
     }
+
+    @ExceptionHandler(TransactionNotFoundException.class)
+    public ResponseEntity<String> transactionNotFound(TransactionNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
 }
 

@@ -1,4 +1,4 @@
-package org.example.billingservice.Kafka;
+package org.example.billingservice.kafka;
 
 import org.example.billingservice.dto.PayoutDTO;
 import org.example.billingservice.service.PayoutService;

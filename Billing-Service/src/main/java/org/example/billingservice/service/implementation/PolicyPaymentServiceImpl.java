@@ -1,20 +1,22 @@
-package org.example.billingservice.service.Implementation;
+package org.example.billingservice.service.implementation;
 
-import com.razorpay.Order;
-import com.razorpay.RazorpayClient;
-import com.razorpay.RazorpayException;
-import com.razorpay.Utils;
-import org.example.billingservice.Repository.TransactionRepository;
+import java.time.LocalDateTime;
+
 import org.example.billingservice.dto.CreateOrderDTO;
 import org.example.billingservice.dto.VerifyPaymentDTO;
+import org.example.billingservice.exception.TransactionNotFoundException;
 import org.example.billingservice.model.entity.Transaction;
 import org.example.billingservice.model.enums.Status;
+import org.example.billingservice.repository.TransactionRepository;
 import org.example.billingservice.service.PolicyPaymentService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import com.razorpay.Order;
+import com.razorpay.RazorpayClient;
+import com.razorpay.RazorpayException;
+import com.razorpay.Utils;
 
 @Service
 public class PolicyPaymentServiceImpl implements PolicyPaymentService {
@@ -42,7 +44,7 @@ public class PolicyPaymentServiceImpl implements PolicyPaymentService {
             ,request.purpose(),Status.PENDING);
             return transactionRepository.save(transaction);
         }
-        catch (Exception e){
+        catch (RazorpayException e){
             throw new RazorpayException("Cant create order with razor pay client");
         }
     }
@@ -52,7 +54,7 @@ public class PolicyPaymentServiceImpl implements PolicyPaymentService {
         Transaction transaction = transactionRepository
                 .findByOrderId(request.razorpayOrderId());
         if(transaction==null){
-            throw new RuntimeException("transaction not found");
+            throw new TransactionNotFoundException("transaction not found");
         }
         try {
             JSONObject options = new JSONObject();
@@ -77,7 +79,7 @@ public class PolicyPaymentServiceImpl implements PolicyPaymentService {
             transactionRepository.save(transaction);
             return true;
 
-        } catch (Exception e) {
+        } catch (RazorpayException e) {
             throw new RazorpayException("Payment verification failed");
         }
     }

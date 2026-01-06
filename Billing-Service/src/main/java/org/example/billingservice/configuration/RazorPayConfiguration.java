@@ -1,11 +1,13 @@
 package org.example.billingservice.configuration;
 
-import com.razorpay.RazorpayClient;
-import com.razorpay.RazorpayException;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import com.razorpay.RazorpayClient;
+import com.razorpay.RazorpayException;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Configuration
@@ -22,7 +24,7 @@ public class RazorPayConfiguration {
         try {
             return new RazorpayClient(keyId, keySecret);
         }
-        catch (Exception e) {
+        catch (RazorpayException e) {
             log.error("Failed to create Razorpay client", e);
             throw new RazorpayException("Failed to create Razorpay client");
         }
