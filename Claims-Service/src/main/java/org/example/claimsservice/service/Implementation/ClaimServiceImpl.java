@@ -1,6 +1,7 @@
 package org.example.claimsservice.service.Implementation;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.example.claimsservice.dto.AddClaimsDTO;
 import org.example.claimsservice.dto.ClaimsOfficerValidationDTO;
@@ -60,14 +61,14 @@ public class ClaimServiceImpl implements ClaimService{
         }
 
         if(policy==null || !policy.status().equals("ACTIVE")) {
-            throw new PolicyNotFoundException("Policy not found");
+            throw new PolicyNotFoundException("Policy not active");
         }
 
-        if((policy.agentId()!=null && !policy.agentId().equals(request.agentId())) ||
-                (policy.agentId()==null && request.agentId()!=null)){
+        if(request.agentId()!=null && !Objects.equals(policy.agentId(), request.agentId())){
             throw new InvalidPolicyClaimException("Agent id mismatch");
         }
 
+        //check if the user is same , enough coverage is present and hospital supports this plan
         if(!policy.userId().equals(request.userId())
                 || policy.remainingCoverage()<request.requestedAmount() ||
                 !providerService.checkHospitalPlan(policy.plan().id(), request.hospitalId()) ) {
