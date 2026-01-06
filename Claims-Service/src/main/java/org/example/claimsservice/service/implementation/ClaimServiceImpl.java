@@ -1,4 +1,4 @@
-package org.example.claimsservice.service.Implementation;
+package org.example.claimsservice.service.implementation;
 
 import java.util.List;
 import java.util.Objects;
@@ -12,7 +12,6 @@ import org.example.claimsservice.exception.InvalidPolicyClaimException;
 import org.example.claimsservice.exception.InvalidStageException;
 import org.example.claimsservice.exception.PolicyNotFoundException;
 import org.example.claimsservice.exception.UnauthorizedClaimReviewException;
-import org.example.claimsservice.feign.IdentityService;
 import org.example.claimsservice.feign.PolicyService;
 import org.example.claimsservice.feign.ProviderService;
 import org.example.claimsservice.model.entity.Claim;
@@ -41,9 +40,11 @@ public class ClaimServiceImpl implements ClaimService{
     private final ClaimReviewRepository claimReviewRepository;
     private final KafkaTemplate<String, Claim> kafkaTemplate;
     
+    private static final String CLAIM_NOT_EXISTS = "Claim does not exist";
+
     public ClaimServiceImpl(ClaimRepository claimRepository, PolicyService policyService,
                             ProviderService providerService, ClaimReviewRepository claimReviewRepository,
-                            IdentityService identityService, KafkaTemplate<String, Claim> kafkaTemplate) {
+                            KafkaTemplate<String, Claim> kafkaTemplate) {
         this.claimRepository = claimRepository;
         this.policyService = policyService;
         this.providerService = providerService;
@@ -101,13 +102,16 @@ public class ClaimServiceImpl implements ClaimService{
     @Override
     public Claim providerVerification(ProviderVerificationDTO request) {
         Claim claim = claimRepository.findById(request.claimId())
-                .orElseThrow(()-> new ClaimNotFoundException("Claim does not exist"));
+                .orElseThrow(()-> new ClaimNotFoundException(CLAIM_NOT_EXISTS));
+        
+        Boolean associated = false;
         try {
-           Boolean associated = providerService.checkAssociation(request.providerId(), claim.getHospitalId());
+           associated = providerService.checkAssociation(request.providerId(), claim.getHospitalId());
         }
         catch (FeignException.BadRequest ex) {
             throw new UnauthorizedClaimReviewException("User not associated with this provider");
         }
+
 
         if(!claim.getStage().equals(ClaimStage.PROVIDER)) {
             throw new InvalidStageException("Claim stage is not PROVIDER");
@@ -127,7 +131,7 @@ public class ClaimServiceImpl implements ClaimService{
     @Override
     public Claim claimsOfficerValidation(ClaimsOfficerValidationDTO request) {
         Claim claim = claimRepository.findById(request.claimsId())
-                .orElseThrow(()-> new ClaimNotFoundException("Claim does not exist"));
+                .orElseThrow(()-> new ClaimNotFoundException(CLAIM_NOT_EXISTS));
 
         if(!claim.getStage().equals(ClaimStage.CLAIMS_OFFICER)) {
             throw new InvalidStageException("Claim stage is not CLAIMS_OFFICER");
@@ -162,7 +166,7 @@ public class ClaimServiceImpl implements ClaimService{
     @Override
     public Claim changeStatus(Long claimId) {
         Claim claim = claimRepository.findById(claimId)
-                .orElseThrow(()-> new ClaimNotFoundException("Claim does not exist"));
+                .orElseThrow(()-> new ClaimNotFoundException(CLAIM_NOT_EXISTS));
 
         claim.setStage(ClaimStage.COMPLETED);
         claim.setStatus(ClaimStatus.PAID);

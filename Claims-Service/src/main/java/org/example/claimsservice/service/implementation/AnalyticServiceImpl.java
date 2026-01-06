@@ -1,6 +1,5 @@
-package org.example.claimsservice.service.Implementation;
+package org.example.claimsservice.service.implementation;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -9,9 +8,9 @@ import org.example.claimsservice.model.entity.Claim;
 import org.example.claimsservice.model.enums.ClaimStatus;
 import org.example.claimsservice.repository.ClaimRepository;
 import org.example.claimsservice.service.AnalyticService;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.data.domain.Page;
 
 @Service
 public class AnalyticServiceImpl implements AnalyticService {

@@ -1,5 +1,6 @@
-package org.example.claimsservice.service.Implementation;
+package org.example.claimsservice.service.implementation;
 
+import java.io.IOException;
 import java.util.Map;
 
 import org.example.claimsservice.exception.UnsupportedFileTypeException;
@@ -39,8 +40,9 @@ public class MediaServiceImpl implements MediaService {
                     )
             );
             return (String) result.get("secure_url");
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to upload document", e);
+        } 
+        catch (IOException | UnsupportedFileTypeException e) {
+            throw new UnsupportedFileTypeException("Failed to upload document");
         }
     }
 }

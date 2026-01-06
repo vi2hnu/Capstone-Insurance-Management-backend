@@ -50,10 +50,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(ClaimAlreadySubmittedException.class)
-    public ResponseEntity<String> claimAlreadySubmitted(ClaimAlreadySubmittedException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
-    }
 
     @ExceptionHandler(ClaimNotFoundException.class)
     public ResponseEntity<String> claimNotFound(ClaimNotFoundException ex) {
@@ -68,11 +64,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UnauthorizedClaimReviewException.class)
     public ResponseEntity<String> unauthorizedProviderReview(UnauthorizedClaimReviewException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
-    }
-
-    @ExceptionHandler(NoBankDetailsFoundException.class)
-    public ResponseEntity<String> noBankDetailsFound(NoBankDetailsFoundException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 }
 
