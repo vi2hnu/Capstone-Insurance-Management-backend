@@ -28,7 +28,7 @@ public class PlanController {
     }
 
     @GetMapping("/get/{id}")
-    public ResponseEntity<Plan> getaPlan(@PathVariable Long id){
+    public ResponseEntity<Plan> getPlan(@PathVariable Long id){
         return ResponseEntity.status(HttpStatus.OK).body(planService.getPlan(id));
     }
     

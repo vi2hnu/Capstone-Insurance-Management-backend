@@ -1,4 +1,4 @@
-package org.example.policyservice.service.Implementation;
+package org.example.policyservice.service.implementation;
 
 import java.util.List;
 
