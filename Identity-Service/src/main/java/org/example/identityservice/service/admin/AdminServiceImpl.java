@@ -22,6 +22,7 @@ public class AdminServiceImpl implements AdminService {
     private final UsersRepository usersRepository;
     private final PasswordEncoder encoder;
     private final KafkaTemplate<String, Users> kafkaTemplate;
+    private static final Random RANDOM = new Random();
 
     public AdminServiceImpl(UsersRepository usersRepository, PasswordEncoder encoder, KafkaTemplate<String, Users> kafkaTemplate) {
         this.usersRepository = usersRepository;
@@ -29,15 +30,11 @@ public class AdminServiceImpl implements AdminService {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    // Source - https://stackoverflow.com/a
-// Posted by Suresh Atta, modified by community. See post 'Timeline' for change history
-// Retrieved 2026-01-02, License - CC BY-SA 3.0
     private String getRandomString() {
         String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         StringBuilder salt = new StringBuilder();
-        Random rnd = new Random();
         while (salt.length() < 10) {
-            int index = (int) (rnd.nextFloat() * SALTCHARS.length());
+            int index = (int) (RANDOM.nextFloat() * SALTCHARS.length());
             salt.append(SALTCHARS.charAt(index));
         }
         String saltStr = salt.toString();

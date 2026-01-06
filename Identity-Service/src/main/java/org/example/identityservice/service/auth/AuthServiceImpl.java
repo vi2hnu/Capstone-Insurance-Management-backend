@@ -1,9 +1,7 @@
 package org.example.identityservice.service.auth;
 
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import org.example.identityservice.dto.ChangePasswordDTO;
 import org.example.identityservice.dto.ForgotPasswordDTO;
@@ -55,9 +53,6 @@ public class AuthServiceImpl implements AuthService {
 
         String jwtToken = jwtUtils.generateTokenFromUsername(userDetails.getUsername());
 
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(item -> item.getAuthority())
-                .collect(Collectors.toList());
 
         boolean changePassword = true;
 

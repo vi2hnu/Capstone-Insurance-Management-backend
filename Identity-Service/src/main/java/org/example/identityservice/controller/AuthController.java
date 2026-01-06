@@ -3,6 +3,7 @@ package org.example.identityservice.controller;
 import org.example.identityservice.dto.ChangePasswordDTO;
 import org.example.identityservice.dto.ForgotPasswordDTO;
 import org.example.identityservice.dto.LoginDTO;
+import org.example.identityservice.dto.LoginRessultDTO;
 import org.example.identityservice.dto.MessageResponse;
 import org.example.identityservice.dto.SignupDTO;
 import org.example.identityservice.dto.ValidateOtpDTO;
@@ -38,13 +39,13 @@ public class AuthController {
     }
 
     @PostMapping("/signIn")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginDTO loginRequest) {
+    public ResponseEntity<LoginRessultDTO> authenticateUser(@Valid @RequestBody LoginDTO loginRequest) {
         return ResponseEntity.ok(authService.login(loginRequest));
     }
 
 
     @PostMapping("/signUp")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupDTO signUpRequest) {
+    public ResponseEntity<MessageResponse> registerUser(@Valid @RequestBody SignupDTO signUpRequest) {
         if(!authService.signUp(signUpRequest)){
             return ResponseEntity.badRequest().body(new MessageResponse("Error: account already exist"));
         }
@@ -52,7 +53,7 @@ public class AuthController {
     }
 
     @PostMapping("/signOut")
-    public ResponseEntity<?> logoutUser() {
+    public ResponseEntity<MessageResponse> logoutUser() {
         ResponseCookie cookie = jwtUtils.getCleanJwtCookie();
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString())
                 .body(new MessageResponse("You've been signed out!"));
