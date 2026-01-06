@@ -3,6 +3,7 @@ package org.example.claimsservice.controller;
 import java.util.List;
 
 import org.example.claimsservice.dto.AddClaimsDTO;
+import org.example.claimsservice.dto.ClaimDTO;
 import org.example.claimsservice.dto.ProviderVerificationDTO;
 import org.example.claimsservice.model.entity.Claim;
 import org.example.claimsservice.service.ClaimService;
@@ -27,8 +28,8 @@ public class ProviderClaimsController {
         this.claimService = claimService;
     }
 
-    @GetMapping("/get/all/claims/{providerId}")
-    public ResponseEntity<List<Claim>> getAllClaims(@PathVariable Long providerId) {
+    @GetMapping("/get/all/claims/{providerId}") //need change
+    public ResponseEntity<List<ClaimDTO>> getAllClaims(@PathVariable Long providerId) {
         return ResponseEntity.status(HttpStatus.OK).body(claimService.getClaimByProviderId(providerId));
     }
 

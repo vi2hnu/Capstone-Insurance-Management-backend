@@ -2,6 +2,7 @@ package org.example.claimsservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.example.claimsservice.dto.ClaimDTO;
 import org.example.claimsservice.dto.ClaimsOfficerValidationDTO;
 import org.example.claimsservice.model.entity.Claim;
 import org.example.claimsservice.model.enums.ReviewStatus;
@@ -84,8 +85,8 @@ class ClaimsOfficerControllerTest {
     void getClaimsForOfficer_returnsList() throws Exception {
         Claim claim = new Claim();
         claim.setId(200L);
-
-        when(claimService.getClaimsForOfficer()).thenReturn(List.of(claim));
+        ClaimDTO claimDTO = ClaimDTO.fromEntity(claim, "testUser");
+        when(claimService.getClaimsForOfficer()).thenReturn(List.of(claimDTO));
 
         mockMvc.perform(get("/api/claims-officer/get/all/claim"))
                 .andExpect(status().isOk())

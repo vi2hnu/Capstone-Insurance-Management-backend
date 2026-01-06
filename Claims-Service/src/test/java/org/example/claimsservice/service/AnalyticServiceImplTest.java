@@ -5,7 +5,10 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 
+import org.example.claimsservice.dto.ClaimDTO;
 import org.example.claimsservice.dto.ClaimStatusCountDTO;
+import org.example.claimsservice.dto.UserDTO;
+import org.example.claimsservice.feign.IdentityService;
 import org.example.claimsservice.model.entity.Claim;
 import org.example.claimsservice.model.enums.ClaimStatus;
 import org.example.claimsservice.repository.ClaimRepository;
@@ -31,6 +34,9 @@ class AnalyticServiceImplTest {
 
     @Mock
     private ClaimRepository claimRepository;
+
+    @Mock
+    private IdentityService identityService;
 
     @InjectMocks
     private AnalyticServiceImpl analyticService;
@@ -60,35 +66,55 @@ class AnalyticServiceImplTest {
     }
 
     @Test
-    void getClaimsByHospital_returnsPageOfClaims() {
+    void getClaimsByHospital_returnsPageOfClaimDTOs() {
         Long hospitalId = 100L;
         int page = 0;
         int size = 5;
+        
         Claim claim = new Claim();
+        claim.setId(1L);
+        claim.setUserId("user123");
+        
         Page<Claim> mockPage = new PageImpl<>(List.of(claim));
         PageRequest pageRequest = PageRequest.of(page, size);
 
+        // CORRECTED: Matches (id, username, name, email, bankAccount)
+        UserDTO mockUser = new UserDTO("user123", "testUser", "Test Name", "test@mail.com", null);
+
         when(claimRepository.findByHospitalIdOrderByClaimRequestDateAsc(hospitalId, pageRequest))
                 .thenReturn(mockPage);
+        when(identityService.getUser("user123")).thenReturn(mockUser);
 
-        Page<Claim> result = analyticService.getClaimsByHospital(hospitalId, page, size);
+        Page<ClaimDTO> result = analyticService.getClaimsByHospital(hospitalId, page, size);
 
         assertEquals(1, result.getTotalElements());
-        assertEquals(claim, result.getContent().get(0));
+        assertEquals(1L, result.getContent().get(0).id());
+        assertEquals("testUser", result.getContent().get(0).username());
+        
         verify(claimRepository).findByHospitalIdOrderByClaimRequestDateAsc(hospitalId, pageRequest);
+        verify(identityService).getUser("user123");
     }
 
     @Test
-    void getTopHighValueClaimsLastMonth_returnsClaimsAndCalculatesDateCorrectly() {
+    void getTopHighValueClaimsLastMonth_returnsClaimDTOsAndCalculatesDateCorrectly() {
         Claim claim = new Claim();
+        claim.setId(2L);
+        claim.setUserId("user456");
+        
         PageRequest pageRequest = PageRequest.of(0, 10);
+        
+        // CORRECTED: Matches (id, username, name, email, bankAccount)
+        UserDTO mockUser = new UserDTO("user456", "highValueUser", "High Name", "high@mail.com", null);
         
         when(claimRepository.findTopHighValueClaimsLastMonth(any(LocalDateTime.class), eq(pageRequest)))
                 .thenReturn(List.of(claim));
+        when(identityService.getUser("user456")).thenReturn(mockUser);
 
-        List<Claim> result = analyticService.getTopHighValueClaimsLastMonth();
+        List<ClaimDTO> result = analyticService.getTopHighValueClaimsLastMonth();
 
         assertEquals(1, result.size());
+        assertEquals(2L, result.get(0).id());
+        assertEquals("highValueUser", result.get(0).username());
         
         ArgumentCaptor<LocalDateTime> dateCaptor = ArgumentCaptor.forClass(LocalDateTime.class);
         verify(claimRepository).findTopHighValueClaimsLastMonth(dateCaptor.capture(), eq(pageRequest));

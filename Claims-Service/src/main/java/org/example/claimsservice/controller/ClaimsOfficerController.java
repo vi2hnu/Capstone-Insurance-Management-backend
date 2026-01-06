@@ -2,6 +2,7 @@ package org.example.claimsservice.controller;
 
 import java.util.List;
 
+import org.example.claimsservice.dto.ClaimDTO;
 import org.example.claimsservice.dto.ClaimsOfficerValidationDTO;
 import org.example.claimsservice.model.entity.Claim;
 import org.example.claimsservice.service.ClaimService;
@@ -29,8 +30,8 @@ public class ClaimsOfficerController {
         return ResponseEntity.status(HttpStatus.OK).body(claimService.claimsOfficerValidation(request));
     }
 
-    @GetMapping("/get/all/claim")
-    public ResponseEntity<List<Claim>> getClaimsForOfficer() {
+    @GetMapping("/get/all/claim") // need change
+    public ResponseEntity<List<ClaimDTO>> getClaimsForOfficer() {
         return ResponseEntity.status(HttpStatus.OK).body(claimService.getClaimsForOfficer());
     }
     

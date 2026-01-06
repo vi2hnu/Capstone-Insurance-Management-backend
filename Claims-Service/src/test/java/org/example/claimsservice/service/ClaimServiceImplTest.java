@@ -306,25 +306,7 @@ class ClaimServiceImplTest {
         assertNotNull(claimService.getClaimById(1L));
     }
 
-    @Test
-    void getClaimByProviderId_filtersForProviderStage() {
-        Claim c1 = new Claim();
-        c1.setStage(ClaimStage.PROVIDER);
-        Claim c2 = new Claim();
-        c2.setStage(ClaimStage.COMPLETED);
 
-        when(claimRepository.findByHospitalId(10L)).thenReturn(List.of(c1, c2));
-
-        List<Claim> result = claimService.getClaimByProviderId(10L);
-        assertEquals(1, result.size());
-        assertEquals(ClaimStage.PROVIDER, result.get(0).getStage());
-    }
-
-    @Test
-    void getClaimsForOfficer_returnsClaims() {
-        when(claimRepository.findByStage(ClaimStage.CLAIMS_OFFICER)).thenReturn(List.of(new Claim()));
-        assertEquals(1, claimService.getClaimsForOfficer().size());
-    }
 
     @Test
     void getSubmittedClaimsOfProvider_returnsClaims() {

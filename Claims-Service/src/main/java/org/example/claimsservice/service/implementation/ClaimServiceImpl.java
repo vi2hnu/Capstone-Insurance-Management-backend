@@ -4,14 +4,17 @@ import java.util.List;
 import java.util.Objects;
 
 import org.example.claimsservice.dto.AddClaimsDTO;
+import org.example.claimsservice.dto.ClaimDTO;
 import org.example.claimsservice.dto.ClaimsOfficerValidationDTO;
 import org.example.claimsservice.dto.PolicyDTO;
 import org.example.claimsservice.dto.ProviderVerificationDTO;
+import org.example.claimsservice.dto.UserDTO;
 import org.example.claimsservice.exception.ClaimNotFoundException;
 import org.example.claimsservice.exception.InvalidPolicyClaimException;
 import org.example.claimsservice.exception.InvalidStageException;
 import org.example.claimsservice.exception.PolicyNotFoundException;
 import org.example.claimsservice.exception.UnauthorizedClaimReviewException;
+import org.example.claimsservice.feign.IdentityService;
 import org.example.claimsservice.feign.PolicyService;
 import org.example.claimsservice.feign.ProviderService;
 import org.example.claimsservice.model.entity.Claim;
@@ -32,26 +35,28 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-public class ClaimServiceImpl implements ClaimService{
+public class ClaimServiceImpl implements ClaimService {
 
     private final ClaimRepository claimRepository;
     private final PolicyService policyService;
     private final ProviderService providerService;
     private final ClaimReviewRepository claimReviewRepository;
     private final KafkaTemplate<String, Claim> kafkaTemplate;
-    
+    private final IdentityService identityService;
+
     private static final String CLAIM_NOT_EXISTS = "Claim does not exist";
 
     public ClaimServiceImpl(ClaimRepository claimRepository, PolicyService policyService,
-                            ProviderService providerService, ClaimReviewRepository claimReviewRepository,
-                            KafkaTemplate<String, Claim> kafkaTemplate) {
+            ProviderService providerService, ClaimReviewRepository claimReviewRepository,
+            KafkaTemplate<String, Claim> kafkaTemplate, IdentityService identityService) {
         this.claimRepository = claimRepository;
         this.policyService = policyService;
         this.providerService = providerService;
         this.claimReviewRepository = claimReviewRepository;
         this.kafkaTemplate = kafkaTemplate;
+        this.identityService = identityService;
     }
-    
+
     @Override
     public Claim addClaim(AddClaimsDTO request) {
         PolicyDTO policy;
@@ -61,23 +66,23 @@ public class ClaimServiceImpl implements ClaimService{
             throw new PolicyNotFoundException("Policy not found");
         }
 
-        if(policy==null || !policy.status().equals("ACTIVE")) {
+        if (policy == null || !policy.status().equals("ACTIVE")) {
             throw new PolicyNotFoundException("Policy not active");
         }
 
-        if(request.agentId()!=null && !Objects.equals(policy.agentId(), request.agentId())){
+        if (request.agentId() != null && !Objects.equals(policy.agentId(), request.agentId())) {
             throw new InvalidPolicyClaimException("Agent id mismatch");
         }
 
         //check if the user is same , enough coverage is present and hospital supports this plan
-        if(!policy.userId().equals(request.userId())
-                || policy.remainingCoverage()<request.requestedAmount() ||
-                !providerService.checkHospitalPlan(policy.plan().id(), request.hospitalId()) ) {
+        if (!policy.userId().equals(request.userId())
+                || policy.remainingCoverage() < request.requestedAmount()
+                || !providerService.checkHospitalPlan(policy.plan().id(), request.hospitalId())) {
             throw new InvalidPolicyClaimException("Invalid policy claim");
         }
 
-        Claim claim = new Claim(request.policyId(), request.userId(), 
-        request.hospitalId(), request.requestedAmount(), request.supportingDocument());
+        Claim claim = new Claim(request.policyId(), request.userId(),
+                request.hospitalId(), request.requestedAmount(), request.supportingDocument());
         claimRepository.save(claim);
         kafkaTemplate.send("claim-submission-email", claim);
         return claim;
@@ -94,31 +99,33 @@ public class ClaimServiceImpl implements ClaimService{
     }
 
     @Override
-    public List<Claim> getClaimByProviderId(Long providerId) {
-        return claimRepository.findByHospitalId(providerId).stream()
-                .filter(c -> c.getStage() == ClaimStage.PROVIDER).toList();
+    public List<ClaimDTO> getClaimByProviderId(Long providerId) {
+        return claimRepository.findByHospitalIdAndStage(providerId, ClaimStage.PROVIDER).stream()
+                .map(claim -> {
+                    UserDTO user = identityService.getUser(claim.getUserId());
+                    return ClaimDTO.fromEntity(claim, user != null ? user.username() : null);
+                })
+                .toList();
     }
 
     @Override
     public Claim providerVerification(ProviderVerificationDTO request) {
         Claim claim = claimRepository.findById(request.claimId())
-                .orElseThrow(()-> new ClaimNotFoundException(CLAIM_NOT_EXISTS));
-        
+                .orElseThrow(() -> new ClaimNotFoundException(CLAIM_NOT_EXISTS));
+
         Boolean associated = false;
         try {
-           associated = providerService.checkAssociation(request.providerId(), claim.getHospitalId());
-        }
-        catch (FeignException.BadRequest ex) {
+            associated = providerService.checkAssociation(request.providerId(), claim.getHospitalId());
+        } catch (FeignException.BadRequest ex) {
             throw new UnauthorizedClaimReviewException("User not associated with this provider");
         }
 
-
-        if(!claim.getStage().equals(ClaimStage.PROVIDER)) {
+        if (!claim.getStage().equals(ClaimStage.PROVIDER)) {
             throw new InvalidStageException("Claim stage is not PROVIDER");
         }
 
-        ClaimReview claimReview = new ClaimReview(ReviewerRole.PROVIDER,request.providerId(),
-                request.status(),request.comments());
+        ClaimReview claimReview = new ClaimReview(ReviewerRole.PROVIDER, request.providerId(),
+                request.status(), request.comments());
 
         claimReviewRepository.save(claimReview);
 
@@ -131,34 +138,32 @@ public class ClaimServiceImpl implements ClaimService{
     @Override
     public Claim claimsOfficerValidation(ClaimsOfficerValidationDTO request) {
         Claim claim = claimRepository.findById(request.claimsId())
-                .orElseThrow(()-> new ClaimNotFoundException(CLAIM_NOT_EXISTS));
+                .orElseThrow(() -> new ClaimNotFoundException(CLAIM_NOT_EXISTS));
 
-        if(!claim.getStage().equals(ClaimStage.CLAIMS_OFFICER)) {
+        if (!claim.getStage().equals(ClaimStage.CLAIMS_OFFICER)) {
             throw new InvalidStageException("Claim stage is not CLAIMS_OFFICER");
         }
-        ClaimReview claimReview = new ClaimReview(ReviewerRole.CLAIMS_OFFICER,request.claimsOfficerId(),
-                request.status(),request.comments());
+        ClaimReview claimReview = new ClaimReview(ReviewerRole.CLAIMS_OFFICER, request.claimsOfficerId(),
+                request.status(), request.comments());
 
         claimReviewRepository.save(claimReview);
 
-
         claim.setClaimsOfficerReview(claimReview);
         claim.setStatus(ClaimStatus.APPROVED);
-        if(!request.status().equals(ReviewStatus.APPROVED)) {
+        if (!request.status().equals(ReviewStatus.APPROVED)) {
             claim.setStatus(ClaimStatus.REJECTED);
             claim.setStage(ClaimStage.COMPLETED);
             Claim savedClaim = claimRepository.save(claim);
-            kafkaTemplate.send("claim-decision-email",savedClaim);
+            kafkaTemplate.send("claim-decision-email", savedClaim);
             return savedClaim;
         }
         claim.setStage(ClaimStage.PAYMENT);
 
         //using kafka call the payment service
-
         Claim savedClaim = claimRepository.save(claim);
-        
-        kafkaTemplate.send("claim-decision-email",savedClaim);
-        kafkaTemplate.send("claim-payout",savedClaim);
+
+        kafkaTemplate.send("claim-decision-email", savedClaim);
+        kafkaTemplate.send("claim-payout", savedClaim);
 
         return savedClaim;
     }
@@ -166,7 +171,7 @@ public class ClaimServiceImpl implements ClaimService{
     @Override
     public Claim changeStatus(Long claimId) {
         Claim claim = claimRepository.findById(claimId)
-                .orElseThrow(()-> new ClaimNotFoundException(CLAIM_NOT_EXISTS));
+                .orElseThrow(() -> new ClaimNotFoundException(CLAIM_NOT_EXISTS));
 
         claim.setStage(ClaimStage.COMPLETED);
         claim.setStatus(ClaimStatus.PAID);
@@ -175,21 +180,25 @@ public class ClaimServiceImpl implements ClaimService{
 
     @Override
     public Claim providerAddClaim(AddClaimsDTO request) {
-        Claim result =  addClaim(request);
+        Claim result = addClaim(request);
         result.setStage(ClaimStage.CLAIMS_OFFICER);
         result.setSubmittedBy(ClaimSubmissionEntity.PROVIDER);
         return claimRepository.save(result);
     }
 
     @Override
-    public List<Claim> getClaimsForOfficer() {
-        return claimRepository.findByStage(ClaimStage.CLAIMS_OFFICER);
+    public List<ClaimDTO> getClaimsForOfficer() {
+        return claimRepository.findByStage(ClaimStage.CLAIMS_OFFICER).stream()
+                .map(claim -> {
+                    UserDTO user = identityService.getUser(claim.getUserId());
+                    return ClaimDTO.fromEntity(claim,user != null ? user.username() : null);
+                })
+                .toList();
     }
 
     @Override
-    public List<Claim> getSubmittedClaimsOfProvider(Long providerId){
-        return claimRepository.findByHospitalIdAndSubmittedBy(providerId,ClaimSubmissionEntity.PROVIDER);
+    public List<Claim> getSubmittedClaimsOfProvider(Long providerId) {
+        return claimRepository.findByHospitalIdAndSubmittedBy(providerId, ClaimSubmissionEntity.PROVIDER);
     }
 
-    
 }

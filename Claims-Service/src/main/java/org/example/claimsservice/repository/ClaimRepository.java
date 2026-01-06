@@ -18,7 +18,7 @@ import org.springframework.stereotype.Repository;
 public interface ClaimRepository extends JpaRepository<Claim, Long> {
     List<Claim> findByUserId(String userId);
     Boolean existsByUserIdAndPolicyId(String userId, Long policyId);
-    List<Claim> findByHospitalId(Long hospitalId);
+    List<Claim> findByHospitalIdAndStage(Long hospitalId, ClaimStage stage);
     List<Claim> findByStage(ClaimStage stage);
     List<Claim> findByHospitalIdAndSubmittedBy(Long hospitalId,ClaimSubmissionEntity submittedby);
 

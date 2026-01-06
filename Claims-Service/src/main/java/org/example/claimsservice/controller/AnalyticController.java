@@ -2,8 +2,8 @@ package org.example.claimsservice.controller;
 
 import java.util.List;
 
+import org.example.claimsservice.dto.ClaimDTO;
 import org.example.claimsservice.dto.ClaimStatusCountDTO;
-import org.example.claimsservice.model.entity.Claim;
 import org.example.claimsservice.service.AnalyticService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -29,14 +29,14 @@ public class AnalyticController {
         return ResponseEntity.status(HttpStatus.OK).body(analyticService.getClaimCountByStatus());
     }
 
-    @GetMapping("/claims/by-hospital/{hospitalId}")
-    public Page<Claim> getClaimsByHospital(@PathVariable Long hospitalId, @RequestParam(defaultValue = "0") int page,
+    @GetMapping("/claims/by-hospital/{hospitalId}") //need change
+    public Page<ClaimDTO> getClaimsByHospital(@PathVariable Long hospitalId, @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         return analyticService.getClaimsByHospital(hospitalId, page, size);
     }
 
-    @GetMapping("/claims/high-value/last-month")
-    public List<Claim> getHighValueClaimsLastMonth() {
+    @GetMapping("/claims/high-value/last-month") //need change
+    public List<ClaimDTO> getHighValueClaimsLastMonth() {
         return analyticService.getTopHighValueClaimsLastMonth();
     }
 

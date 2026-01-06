@@ -3,6 +3,7 @@ package org.example.claimsservice.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.example.claimsservice.dto.AddClaimsDTO;
+import org.example.claimsservice.dto.ClaimDTO;
 import org.example.claimsservice.dto.ProviderVerificationDTO;
 import org.example.claimsservice.model.entity.Claim;
 import org.example.claimsservice.model.enums.ReviewStatus;
@@ -53,8 +54,9 @@ class ProviderClaimsControllerTest {
         Long providerId = 1L;
         Claim claim = new Claim();
         claim.setId(101L);
+        ClaimDTO claimDTO = ClaimDTO.fromEntity(claim, "testUser");
 
-        when(claimService.getClaimByProviderId(providerId)).thenReturn(List.of(claim));
+        when(claimService.getClaimByProviderId(providerId)).thenReturn(List.of(claimDTO));
 
         mockMvc.perform(get("/api/provider/get/all/claims/{providerId}", providerId))
                 .andExpect(status().isOk())
