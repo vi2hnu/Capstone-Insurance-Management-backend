@@ -25,7 +25,7 @@ public class AnalyticController {
     }
 
     @GetMapping("/get/claims/by-status")
-    public ResponseEntity<List<ClaimStatusCountDTO>> getMethodName() {
+    public ResponseEntity<List<ClaimStatusCountDTO>> getClaimsByStatus() {
         return ResponseEntity.status(HttpStatus.OK).body(analyticService.getClaimCountByStatus());
     }
 

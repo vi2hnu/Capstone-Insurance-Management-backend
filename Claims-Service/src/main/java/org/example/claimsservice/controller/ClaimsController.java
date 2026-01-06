@@ -30,12 +30,12 @@ public class ClaimsController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Claim> postMethodName(@RequestBody @Valid AddClaimsDTO request) {
+    public ResponseEntity<Claim> addClaim(@RequestBody @Valid AddClaimsDTO request) { //change name
         return ResponseEntity.status(HttpStatus.CREATED).body(claimService.addClaim(request));
     }
     
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Claim>> getMethodName(@PathVariable String userId) {
+    public ResponseEntity<List<Claim>> getClaimsOfUser(@PathVariable String userId) { //change name
         return ResponseEntity.status(HttpStatus.OK).body(claimService.getClaimsByUserId(userId));
     }
     
