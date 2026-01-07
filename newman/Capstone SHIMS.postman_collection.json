@@ -1,0 +1,1072 @@
+{
+	"info": {
+		"_postman_id": "1f059de6-133c-47b4-a125-3795e692015b",
+		"name": "Capstone SHIMS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "36929863"
+	},
+	"item": [
+		{
+			"name": "Identity Service",
+			"item": [
+				{
+					"name": "Admin",
+					"item": [
+						{
+							"name": "Get Users",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc2NzcxOTkyMywiZXhwIjoxNzY3ODA2MzIzLCJSb2xlIjoiQURNSU4ifQ.xNSAUjQvOMTrbFsTJkGb_g5Flarul3AR9fZAYxO2BEQ",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \n    \"username\": \"vishnu\",\n    \"password\": \"abc\"\n}\n"
+								},
+								"url": "http://localhost:9000/identityservice/api/admin/get/role/INSURANCE_AGENT"
+							},
+							"response": []
+						},
+						{
+							"name": "Create User",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc2NzcxOTkyMywiZXhwIjoxNzY3ODA2MzIzLCJSb2xlIjoiQURNSU4ifQ.xNSAUjQvOMTrbFsTJkGb_g5Flarul3AR9fZAYxO2BEQ",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\":\"rajesh345\",\n    \"username\":\"rajes245h\",\n    \"email\":\"raje132sh@xyz.com\",\n    \"role\":\"CLAIMS_OFFICER\",\n    \"gender\":\"MALE\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "http://localhost:9000/identityservice/api/admin/create/user"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Common",
+					"item": [
+						{
+							"name": "SignUp",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2aXNobnUiLCJpYXQiOjE3NjY5ODk0MzQsImV4cCI6MTc2Njk5MzAzNCwiUm9sZSI6IlVTRVIifQ.yrCqFKawXnfuYtmiO7J3-aN1qUKbI-qKzSrPOIROxW8",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \n    \"name\": \"vishnu 123\",\n    \"username\": \"vvishnu1231\",\n    \"email\":  \"ante23e23eo@gmail.com\",\n    \"password\": \"abc12345\",\n    \"gender\": \"MALE\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "http://localhost:9000/identityservice/api/auth/signUp"
+							},
+							"response": []
+						},
+						{
+							"name": "Login",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \n    \"username\": \"admin\",\n    \"password\": \"admin12345\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "http://localhost:9000/identityservice/api/auth/signIn"
+							},
+							"response": []
+						},
+						{
+							"name": "Change password",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \n    \"username\": \"vishnu\",\n    \"oldPassword\": \"abc12345\",\n    \"newPassword\": \"abc\"\n    \n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "http://localhost:9000/identityservice/api/auth/change/password"
+							},
+							"response": []
+						},
+						{
+							"name": "generate otp",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "http://localhost:9000/identityservice/api/auth/otp/generate/vishnu@gmail.com"
+							},
+							"response": []
+						},
+						{
+							"name": "validate otp",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"vishnu@gmail.com\",\n    \"otp\":\"834888\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "http://localhost:8080/api/auth/otp/validate"
+							},
+							"response": []
+						},
+						{
+							"name": "Forgot password",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2aXNobnUgdmFyYWRoYW4iLCJpYXQiOjE3NjczMzU4NjIsImV4cCI6MTc2NzQyMjI2MiwiUm9sZSI6IkNMQUlNU19PRkZJQ0VSIn0.Z4JNTyfBVy1O8Ym859A5W8vbrg5ocHWaC4ns8K2qLUE",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\":\"vishnuvaradhankr@gmail.com\",\n  \"password\":\"abc12345\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "http://localhost:9000/identityservice/api/auth/forgot/password"
+							},
+							"response": []
+						},
+						{
+							"name": "Check User",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc2NzQ0ODQ2MSwiZXhwIjoxNzY3NTM0ODYxLCJSb2xlIjoiQURNSU4ifQ.fXU8v1qLXg9CU086ASNIKQUQ4RrBvcfPyuamA5L20Bo",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \n    \"name\": \"vishnu1\",\n    \"email\":\"vishnuvaradhankr1@gmail.com\",\n    \"gender\":\"MALE\"\n\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "http://localhost:9000/identityservice/api/user/check/user"
+							},
+							"response": []
+						},
+						{
+							"name": "get users",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXRlbCIsImlhdCI6MTc2NzI3MjQ5MCwiZXhwIjoxNzY3MzU4ODkwLCJSb2xlIjoiUFJPVklERVIifQ.qshnn3n7jazMDBA75Cc9PWPjNNOvisyuZGK9nidS0tE",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n    \"69522384f4d3eb9887cffcf8\",\n    \"695223a9f4d3eb9887cffcf9\"\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "http://localhost:9000/identityservice/api/user/get/user/695222c7f4d3eb9887cffcf7"
+							},
+							"response": []
+						},
+						{
+							"name": "add bank",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc2NzMzNDA0NCwiZXhwIjoxNzY3NDIwNDQ0LCJSb2xlIjoiQURNSU4ifQ.8yBvYx5UzMnIBi0AxPj6-p4FdUCpbq5eK4AyGv6lJFg",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"userId\": \"69560b640e0f761dfd73ac2c\",\n    \"bankName\": \"State Bank of India\",\n    \"accountNumber\": \"123456789013\",\n    \"ifscCode\": \"SBIN0000456\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "http://localhost:9000/identityservice/api/user/add/bank"
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Policy Service",
+			"item": [
+				{
+					"name": "Add Plan",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc2NzcxOTkyMywiZXhwIjoxNzY3ODA2MzIzLCJSb2xlIjoiQURNSU4ifQ.xNSAUjQvOMTrbFsTJkGb_g5Flarul3AR9fZAYxO2BEQ",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"silver start policy\",\n  \"description\": \"Premium health insurance with maximum coverage and added benefits \",\n  \"premiumAmount\": 2500,\n  \"coverageAmount\": 1000000,\n  \"duration\": 12\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:9000/policyservice/api/admin/plan/add"
+					},
+					"response": []
+				},
+				{
+					"name": "Get all plan",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXRlbCIsImlhdCI6MTc2NzQyODA1MSwiZXhwIjoxNzY3NTE0NDUxLCJSb2xlIjoiUFJPVklERVIifQ.BbBG6wTYXIoAafqOYinjIAyLkP91Fni-6fXC4EyNa1M",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Gold Health Plan\",\n  \"description\": \"Comprehensive health insurance with high coverage\",\n  \"premiumAmount\": 1500,\n  \"coverageAmount\": 500000,\n  \"duration\": 12\n}\n"
+						},
+						"url": "http://localhost:9000/policyservice/api/plan/get/all"
+					},
+					"response": []
+				},
+				{
+					"name": "Enroll a policy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc2NzI2MTg2MiwiZXhwIjoxNzY3MzQ4MjYyLCJSb2xlIjoiQURNSU4ifQ.KezmAmQZmIuxmyVyqrDIv0dAhwgiW2Ggv7Q2ytAKids",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\":\"695222c7f4d3eb9887cffcf7\",\n  \"planId\":\"6\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:9000/policyservice/api/policy/enroll"
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel a policy",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc2NzI2MTg2MiwiZXhwIjoxNzY3MzQ4MjYyLCJSb2xlIjoiQURNSU4ifQ.KezmAmQZmIuxmyVyqrDIv0dAhwgiW2Ggv7Q2ytAKids",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\":\"69522384f4d3eb9887cffcf8\",\n  \"policyId\":\"3\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:9000/policyservice/api/policy/cancel"
+					},
+					"response": []
+				},
+				{
+					"name": "Renew a policy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc2NzI2MTg2MiwiZXhwIjoxNzY3MzQ4MjYyLCJSb2xlIjoiQURNSU4ifQ.KezmAmQZmIuxmyVyqrDIv0dAhwgiW2Ggv7Q2ytAKids",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\":\"69522384f4d3eb9887cffcf8\",\n  \"policyId\":\"2\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:9000/policyservice/api/policy/renew"
+					},
+					"response": []
+				},
+				{
+					"name": "Get all registered policies",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc2NzMzNDA0NCwiZXhwIjoxNzY3NDIwNDQ0LCJSb2xlIjoiQURNSU4ifQ.8yBvYx5UzMnIBi0AxPj6-p4FdUCpbq5eK4AyGv6lJFg",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\":\"695222c7f4d3eb9887cffcf7\",\n  \"policyId\":\"2\"\n}\n"
+						},
+						"url": "http://localhost:9000/policyservice/api/policy/get/all/695222c7f4d3eb9887cffcf7"
+					},
+					"response": []
+				},
+				{
+					"name": "change remaining coverage",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"policyId\":\"1\",\n    \"claimedAmount\":1000,\n    \"agentId\":\"695239b34183396ae011595f\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:9000/policyservice/api/policy/get/all/695222c7f4d3eb9887cffcf7"
+					},
+					"response": []
+				},
+				{
+					"name": "Get all policies by agentid",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwcml5YSIsImlhdCI6MTc2NzMzNDgzMiwiZXhwIjoxNzY3NDIxMjMyLCJSb2xlIjoiSU5TVVJBTkNFX0FHRU5UIn0.qgfwFXqzp299YLoi-H64JLU-GM4uERuNaBSBu4dIG90",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:9000/policyservice/api/agent/get/all/enrollment/695239b34183396ae011595f"
+					},
+					"response": []
+				},
+				{
+					"name": "get policy",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwcml5YSIsImlhdCI6MTc2NzMzNDgzMiwiZXhwIjoxNzY3NDIxMjMyLCJSb2xlIjoiSU5TVVJBTkNFX0FHRU5UIn0.qgfwFXqzp299YLoi-H64JLU-GM4uERuNaBSBu4dIG90",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:9000/policyservice/api/policy/get/2"
+					},
+					"response": []
+				},
+				{
+					"name": "Get all policy of user",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyYW1lc2giLCJpYXQiOjE3NjcyNjIzMDQsImV4cCI6MTc2NzM0ODcwNCwiUm9sZSI6IklOU1VSQU5DRV9BR0VOVCJ9.Zmq0pIN4AifTmPPThIMvrCwDAid7wShVP5-KRBizeto",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\":\"69522384f4d3eb9887cffcf8\",\n  \"policyId\":\"2\"\n}\n"
+						},
+						"url": "http://localhost:9000/policyservice/api/agent/get/all/enrollment/695239b34183396ae011595f"
+					},
+					"response": []
+				},
+				{
+					"name": "check enrollment",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbnRvIiwiaWF0IjoxNzY3NDI0MTg2LCJleHAiOjE3Njc1MTA1ODYsIlJvbGUiOiJVU0VSIn0.KNJSlqyvG8wQ8qKZoiFjBdRPvl79R8gqyeNuN0tUw6U",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:9000/policyservice/api/policy/check/enrollment/695222c7f4d3eb9887cffcf7/1"
+					},
+					"response": []
+				},
+				{
+					"name": "Plan count",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc2NzUzNjMwNiwiZXhwIjoxNzY3NjIyNzA2LCJSb2xlIjoiQURNSU4ifQ.1cNUh_WiydRsGBlxvcLGIQLgGS_YFRCJG4lhzbbKi_4",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\":\"695222c7f4d3eb9887cffcf7\",\n  \"planId\":\"5\"\n}\n"
+						},
+						"url": "http://localhost:9000/policyservice/api/admin/plan/analytics"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Provider Service",
+			"item": [
+				{
+					"name": "Add hospital",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc2NzcxOTkyMywiZXhwIjoxNzY3ODA2MzIzLCJSb2xlIjoiQURNSU4ifQ.xNSAUjQvOMTrbFsTJkGb_g5Flarul3AR9fZAYxO2BEQ",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"hospitalName\": \"Apollo Multispeciality Hospital\",\n  \"cityName\": \"delhi\",\n  \"phoneNumber\": \"+91-9866543210\",\n  \"email\": \"contact@delhi.com\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:9000/providerservice/api/admin/add/hospital"
+					},
+					"response": []
+				},
+				{
+					"name": "Map Authority",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc2NzcxOTkyMywiZXhwIjoxNzY3ODA2MzIzLCJSb2xlIjoiQURNSU4ifQ.xNSAUjQvOMTrbFsTJkGb_g5Flarul3AR9fZAYxO2BEQ",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"hospitalId\":\"8\",\n  \"userId\":\"695d45072be2b46af6fa267f\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:9000/providerservice/api/admin/map/user"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Bank",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXRlbCIsImlhdCI6MTc2NzcyMDI4NSwiZXhwIjoxNzY3ODA2Njg1LCJSb2xlIjoiUFJPVklERVIifQ.9j1tp61HOEhXDocikTYf9IUCvS9gprjlydD6_lQgTVM",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\":\"6953523ff97c4b56fad2de07\",\n    \"hospitalId\":\"8\",\n    \"bankName\": \"State Bank of India\",\n    \"accountNumber\": \"123456789012\",\n    \"ifsc\": \"SBIN0010456\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:9000/providerservice/api/provider/authority/add/bank"
+					},
+					"response": []
+				},
+				{
+					"name": "Register plan",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXRlbCIsImlhdCI6MTc2NzcyMDI4NSwiZXhwIjoxNzY3ODA2Njg1LCJSb2xlIjoiUFJPVklERVIifQ.9j1tp61HOEhXDocikTYf9IUCvS9gprjlydD6_lQgTVM",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\":\"695d45072be2b46af6fa267f\",\n    \"hospitalId\":\"3\",\n    \"planId\":\"8\",\n    \"networkType\":\"OUT_NETWORK\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:9000/providerservice/api/provider/authority/register/plan"
+					},
+					"response": []
+				},
+				{
+					"name": "get all providers by plan",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXRlbCIsImlhdCI6MTc2NzcyMDI4NSwiZXhwIjoxNzY3ODA2Njg1LCJSb2xlIjoiUFJPVklERVIifQ.9j1tp61HOEhXDocikTYf9IUCvS9gprjlydD6_lQgTVM",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": "http://localhost:9000/providerservice/api/provider/get/all/3"
+					},
+					"response": []
+				},
+				{
+					"name": "check plan of a hospital",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXRlbCIsImlhdCI6MTc2NzcyMDI4NSwiZXhwIjoxNzY3ODA2Njg1LCJSb2xlIjoiUFJPVklERVIifQ.9j1tp61HOEhXDocikTYf9IUCvS9gprjlydD6_lQgTVM",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"policyId\": \"2\",\n  \"userId\": \"69522384f4d3eb9887cffcf8\",\n  \"hospitalId\": 2,\n  \"requestedAmount\": 45000.00,\n  \"supportingDocument\": \"https://res.cloudinary.com/dk9jeihzd/raw/upload/v1767091304/pdfs/oxyhfwb09h07ijxmgmry\"\n}\n"
+						},
+						"url": {
+							"raw": "http://localhost:9000/providerservice/api/provider/check/plan/3/3?",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"providerservice",
+								"api",
+								"provider",
+								"check",
+								"plan",
+								"3",
+								"3"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check Association",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXRlbCIsImlhdCI6MTc2NzcyMDI4NSwiZXhwIjoxNzY3ODA2Njg1LCJSb2xlIjoiUFJPVklERVIifQ.9j1tp61HOEhXDocikTYf9IUCvS9gprjlydD6_lQgTVM",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"hospitalName\": \"Apollo Multispeciality Hospital\",\n  \"cityName\": \"Bangalore\",\n  \"phoneNumber\": \"+91-9876543210\",\n  \"email\": \"contact@apollobangalore.com\"\n}\n"
+						},
+						"url": "http://localhost:9000/providerservice/api/provider/check/plan/3/3"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Provider type",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXRlbCIsImlhdCI6MTc2NzcyMDI4NSwiZXhwIjoxNzY3ODA2Njg1LCJSb2xlIjoiUFJPVklERVIifQ.9j1tp61HOEhXDocikTYf9IUCvS9gprjlydD6_lQgTVM",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:9000/providerservice/api/provider/get/type/3/1"
+					},
+					"response": []
+				},
+				{
+					"name": "get all hospital",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXRlbCIsImlhdCI6MTc2NzcyMDI4NSwiZXhwIjoxNzY3ODA2Njg1LCJSb2xlIjoiUFJPVklERVIifQ.9j1tp61HOEhXDocikTYf9IUCvS9gprjlydD6_lQgTVM",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"hospitalName\": \"Apollo Multispeciality Hospital\",\n  \"cityName\": \"Bangalore\",\n  \"phoneNumber\": \"+91-9876543210\",\n  \"email\": \"contact@apollobangalore.com\"\n}\n"
+						},
+						"url": "http://localhost:9000/providerservice/api/admin/get/all"
+					},
+					"response": []
+				},
+				{
+					"name": "Get associated hospital",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXRlbCIsImlhdCI6MTc2NzcyMDI4NSwiZXhwIjoxNzY3ODA2Njg1LCJSb2xlIjoiUFJPVklERVIifQ.9j1tp61HOEhXDocikTYf9IUCvS9gprjlydD6_lQgTVM",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"hospitalName\": \"Apollo Multispeciality Hospital\",\n  \"cityName\": \"Bangalore\",\n  \"phoneNumber\": \"+91-9876543210\",\n  \"email\": \"contact@apollobangalore.com\"\n}\n"
+						},
+						"url": {
+							"raw": "http://localhost:9000/providerservice/api/provider/get/associated/hospital/6953523ff97c4b56fad2de07?",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"providerservice",
+								"api",
+								"provider",
+								"get",
+								"associated",
+								"hospital",
+								"6953523ff97c4b56fad2de07"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Claims Service",
+			"item": [
+				{
+					"name": "Upload Document",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXRlbCIsImlhdCI6MTc2NzcyMDI4NSwiZXhwIjoxNzY3ODA2Njg1LCJSb2xlIjoiUFJPVklERVIifQ.9j1tp61HOEhXDocikTYf9IUCvS9gprjlydD6_lQgTVM",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/home/vishnu/Downloads/Smart Health Insurance Management System.pdf"
+								}
+							]
+						},
+						"url": "http://localhost:9000/claimsservice/api/media/upload"
+					},
+					"response": []
+				},
+				{
+					"name": "Make a claim",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXRlbCIsImlhdCI6MTc2NzcyMDI4NSwiZXhwIjoxNzY3ODA2Njg1LCJSb2xlIjoiUFJPVklERVIifQ.9j1tp61HOEhXDocikTYf9IUCvS9gprjlydD6_lQgTVM",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"policyId\": \"7\",\n  \"userId\": \"695222c7f4d3eb9887cffcf7\",\n  \"hospitalId\": 1,\n  \"requestedAmount\": 45000.00,\n  \"supportingDocument\": \"url\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:9000/claimsservice/api/claim/add"
+					},
+					"response": []
+				},
+				{
+					"name": "get claims of a user",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXRlbCIsImlhdCI6MTc2NzcyMDI4NSwiZXhwIjoxNzY3ODA2Njg1LCJSb2xlIjoiUFJPVklERVIifQ.9j1tp61HOEhXDocikTYf9IUCvS9gprjlydD6_lQgTVM",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"policyId\": \"2\",\n  \"userId\": \"69522384f4d3eb9887cffcf8\",\n  \"hospitalId\": 2,\n  \"requestedAmount\": 45000.00,\n  \"supportingDocument\": \"https://res.cloudinary.com/dk9jeihzd/raw/upload/v1767091304/pdfs/oxyhfwb09h07ijxmgmry\"\n}\n"
+						},
+						"url": "http://localhost:9000/claimsservice/api/claim/user/695222c7f4d3eb9887cffcf7"
+					},
+					"response": []
+				},
+				{
+					"name": "Track claim",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXRlbCIsImlhdCI6MTc2NzcyMDI4NSwiZXhwIjoxNzY3ODA2Njg1LCJSb2xlIjoiUFJPVklERVIifQ.9j1tp61HOEhXDocikTYf9IUCvS9gprjlydD6_lQgTVM",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:9000/claimsservice/api/claim/get/7"
+					},
+					"response": []
+				},
+				{
+					"name": "get all claims submitted to a provider",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXRlbCIsImlhdCI6MTc2NzcyMDI4NSwiZXhwIjoxNzY3ODA2Njg1LCJSb2xlIjoiUFJPVklERVIifQ.9j1tp61HOEhXDocikTYf9IUCvS9gprjlydD6_lQgTVM",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": "http://localhost:9000/claimsservice/api/provider/get/all/claims/3"
+					},
+					"response": []
+				},
+				{
+					"name": "Provider verification",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXRlbCIsImlhdCI6MTc2NzcyMDI4NSwiZXhwIjoxNzY3ODA2Njg1LCJSb2xlIjoiUFJPVklERVIifQ.9j1tp61HOEhXDocikTYf9IUCvS9gprjlydD6_lQgTVM",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"providerId\": \"6953523ff97c4b56fad2de07\",\n  \"claimId\":10,\n  \"status\":\"APPROVED\",\n  \"comments\":\"document verified\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:9000/claimsservice/api/provider/claim/verify"
+					},
+					"response": []
+				},
+				{
+					"name": "claims officer validates a claim",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2aXNobnUgdmFyYWRoYW4iLCJpYXQiOjE3NjczMzU4NjIsImV4cCI6MTc2NzQyMjI2MiwiUm9sZSI6IkNMQUlNU19PRkZJQ0VSIn0.Z4JNTyfBVy1O8Ym859A5W8vbrg5ocHWaC4ns8K2qLUE",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"claimsOfficerId\": \"695238baf04f372ed53aa386\",\n  \"claimsId\":9,\n  \"status\":\"REJECTED\",\n  \"comments\":\"claim approved\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:9000/claimsservice/api/claims-officer/validate/claim"
+					},
+					"response": []
+				},
+				{
+					"name": "Get claims for officer",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2aXNobnUgdmFyYWRoYW4iLCJpYXQiOjE3Njc0MTExMzQsImV4cCI6MTc2NzQ5NzUzNCwiUm9sZSI6IkNMQUlNU19PRkZJQ0VSIn0.x9_VBThvDVVD2XQ57GGDA_OUM5mOTkwNLEoF7CGoGc0",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:9000/claimsservice/api/claims-officer/get/all/claim"
+					},
+					"response": []
+				},
+				{
+					"name": "Provider in network claim",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2aXNobnUgdmFyYWRoYW4iLCJpYXQiOjE3Njc3MjA2NjQsImV4cCI6MTc2NzgwNzA2NCwiUm9sZSI6IkNMQUlNU19PRkZJQ0VSIn0.5Sk850-TAkO4foWr3Tr8A9vbkFz0rFMU-84D1IeRsf8",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"policyId\": \"7\",\n  \"userId\": \"695222c7f4d3eb9887cffcf7\",\n  \"hospitalId\": 1,\n  \"requestedAmount\": 45000.00,\n  \"supportingDocument\": \"https://res.cloudinary.com/dk9jeihzd/raw/upload/v1767335153/pdfs/fbuu1aolldsijbrowbuf\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:9000/claimsservice/api/provider/add/claim"
+					},
+					"response": []
+				},
+				{
+					"name": "analytics 1",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2aXNobnUgdmFyYWRoYW4iLCJpYXQiOjE3Njc3MjA2NjQsImV4cCI6MTc2NzgwNzA2NCwiUm9sZSI6IkNMQUlNU19PRkZJQ0VSIn0.5Sk850-TAkO4foWr3Tr8A9vbkFz0rFMU-84D1IeRsf8",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:9000/claimsservice/api/provider/get/submitted/claims/1"
+					},
+					"response": []
+				},
+				{
+					"name": "analytics 3",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2aXNobnUgdmFyYWRoYW4iLCJpYXQiOjE3Njc3MjA2NjQsImV4cCI6MTc2NzgwNzA2NCwiUm9sZSI6IkNMQUlNU19PRkZJQ0VSIn0.5Sk850-TAkO4foWr3Tr8A9vbkFz0rFMU-84D1IeRsf8",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:9000/claimsservice/api/admin/claims/high-value/last-month"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Billing Service",
+			"item": [
+				{
+					"name": "Create Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2aXNobnUgdmFyYWRoYW4iLCJpYXQiOjE3Njc3MjA2NjQsImV4cCI6MTc2NzgwNzA2NCwiUm9sZSI6IkNMQUlNU19PRkZJQ0VSIn0.5Sk850-TAkO4foWr3Tr8A9vbkFz0rFMU-84D1IeRsf8",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\":\"695222c7f4d3eb9887cffcf7\",\n    \"amount\":1500.0,\n    \"purpose\":\"POLICY_ENROLLMENT\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:9000/billingservice/api/payment/create/order"
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwcml5YSIsImlhdCI6MTc2NzY2NDU5MiwiZXhwIjoxNzY3NzUwOTkyLCJSb2xlIjoiSU5TVVJBTkNFX0FHRU5UIn0.yLK--b1RbukhZ9MPwpKkeYxTNVM5hNV6jvh6Vp0q4ns",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"razorpayOrderId\":\"order_RyBjpg1jmrytAb\",\n    \"razorpayPaymentId\":\"pay_RyBpkD8xQz1234\",\n    \"razorpaySignature\":\"mJC/0FdOctH0v2gJ+YTcEjlMK4w6APnQ8oXRf47hRLI=\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:9000/billingservice/api/payment/verify/order"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
