@@ -6,6 +6,10 @@ The Insurance Management System is a comprehensive, microservices-based backend 
 
 Built using Java Spring Boot and containerized with Docker, this project leverages a distributed architecture to ensure scalability, fault tolerance, and ease of maintenance.
 
+## Frontend repo:
+
+[Github Link](https://github.com/vi2hnu/Capstone-Insurance-Management-frontend)
+
 ## Table of Contents
 
 - [Architecture](#architecture)
@@ -15,11 +19,10 @@ Built using Java Spring Boot and containerized with Docker, this project leverag
 - [Microservices Landscape](#microservices-landscape)
 - [Project Structure](#project-structure)
 - [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Environment Configuration](#environment-configuration)
-  - [Installation & Execution](#installation--execution)
 - [API Documentation](#api-documentation)
 
+
+(Note: all screenshots of working and tests are present in REPORT.docx)
 ---
 
 ## Architecture
@@ -181,6 +184,10 @@ Ensure the following are installed and running on your machine:
 
 change the config server url in all services to localhost and run all services
 
+
+### Using jenkins
+
+Use the pipeline.groovy pipeline in your jenkins and start the pipeline
 ---
 
 ## API Documentation
