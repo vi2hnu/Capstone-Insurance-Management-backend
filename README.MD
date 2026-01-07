@@ -31,6 +31,10 @@ Built using Java Spring Boot and containerized with Docker, this project leverag
 
 The system follows a Microservices Architecture pattern, utilizing an API Gateway for routing, a Config Server for centralized configuration, and a Service Registry for dynamic service discovery. Asynchronous communication between services is handled via Apache Kafka.
 
+ER diagram:
+
+<img width="2051" height="1332" alt="Image" src="https://github.com/user-attachments/assets/b2959645-a0ab-419b-ba83-6ca57a14f789" />
+
 ---
 
 ## SonarQube Analysis
