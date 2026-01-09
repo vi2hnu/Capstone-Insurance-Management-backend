@@ -10,7 +10,7 @@ pipeline {
 
         stage('Package Services') {
             steps {
-                sh 'mvn clean package'
+                sh 'mvn package'
             }
             post {
                 success {
